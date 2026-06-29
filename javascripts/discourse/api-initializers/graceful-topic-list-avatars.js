@@ -9,21 +9,19 @@ export default apiInitializer("1.34.0", (api) => {
     );
   }
 
-  function cloneAvatarLink(sourceLink, className) {
+  function cloneAvatarLink(sourceLink, className, size = AVATAR_SIZE) {
     if (!sourceLink) {
       return null;
     }
 
     const clone = sourceLink.cloneNode(true);
     clone.classList.add(className);
-    clone.classList.add("graceful-topic-list-avatar-link");
     clone.removeAttribute("tabindex");
 
     const avatar = clone.querySelector("img.avatar");
     if (avatar) {
-      avatar.width = AVATAR_SIZE;
-      avatar.height = AVATAR_SIZE;
-      avatar.classList.add("graceful-topic-list-avatar-image");
+      avatar.width = size;
+      avatar.height = size;
       avatar.classList.remove("latest");
     }
 
@@ -36,21 +34,21 @@ export default apiInitializer("1.34.0", (api) => {
 
   function buildStats(row) {
     const stats = document.createElement("div");
-    stats.className = "graceful-topic-list-stats";
+    stats.className = "gf-desktop-stats";
 
     [
       ["posts", cellNumber(row, "td.posts"), "POSTS"],
       ["views", cellNumber(row, "td.views"), "VIEWS"],
     ].forEach(([name, value, label]) => {
       const item = document.createElement("div");
-      item.className = `graceful-topic-list-stat graceful-topic-list-stat-${name}`;
+      item.className = `gf-stat-box gf-stat-${name}`;
 
-      const number = document.createElement("div");
-      number.className = "graceful-topic-list-stat-number";
+      const number = document.createElement("span");
+      number.className = "gf-stat-number";
       number.textContent = value;
 
-      const text = document.createElement("div");
-      text.className = "graceful-topic-list-stat-label";
+      const text = document.createElement("span");
+      text.className = "gf-stat-label";
       text.textContent = label;
 
       item.append(number, text);
@@ -62,27 +60,39 @@ export default apiInitializer("1.34.0", (api) => {
 
   function buildLatest(row, latestAvatar, hasReplies) {
     const latest = document.createElement("div");
-    latest.className = "graceful-topic-list-latest";
+    latest.className = hasReplies
+      ? "gf-last-post-summary"
+      : "gf-last-post-summary gf-no-reply-summary";
 
-    const latestMeta = document.createElement("div");
-    latestMeta.className = "graceful-topic-list-latest-meta";
-
-    const activityDate = row.querySelector("td.activity .relative-date")?.cloneNode(true);
-    const time = document.createElement("div");
-    time.className = "graceful-topic-list-latest-time";
-
-    if (hasReplies && activityDate) {
-      time.append(activityDate);
-    } else {
-      time.textContent = "No one has replied";
+    if (!hasReplies) {
+      const noReply = document.createElement("div");
+      noReply.className = "gf-no-reply";
+      noReply.textContent = "No one has replied";
+      latest.append(noReply);
+      return latest;
     }
 
-    const summary = document.createElement("div");
-    summary.className = "graceful-topic-list-latest-summary";
-    summary.setAttribute("aria-hidden", "true");
+    const avatarWrap = document.createElement("div");
+    avatarWrap.className = "gf-last-avatar-inline";
+    avatarWrap.append(latestAvatar);
 
-    latestMeta.append(time, summary);
-    latest.append(latestAvatar, latestMeta);
+    const copy = document.createElement("div");
+    copy.className = "gf-last-reply-copy";
+
+    const head = document.createElement("div");
+    head.className = "gf-last-reply-head";
+
+    const activityLink = row.querySelector("td.activity .post-activity")?.cloneNode(true);
+    if (activityLink) {
+      activityLink.classList.add("gf-last-date");
+      head.append(activityLink);
+    }
+
+    const excerpt = document.createElement("div");
+    excerpt.className = "gf-last-reply-excerpt";
+
+    copy.append(head, excerpt);
+    latest.append(avatarWrap, copy);
 
     return latest;
   }
@@ -92,7 +102,7 @@ export default apiInitializer("1.34.0", (api) => {
     const posters = row.querySelector("td.posters");
     const titleLine = mainLink?.querySelector(".link-top-line");
 
-    if (!mainLink || !posters || !titleLine) {
+    if (!mainLink || !posters || !titleLine || mainLink.querySelector(".gf-topic-row")) {
       return;
     }
 
@@ -101,8 +111,6 @@ export default apiInitializer("1.34.0", (api) => {
       return;
     }
 
-    mainLink.querySelector(".graceful-topic-list-layout")?.remove();
-
     const originalPoster =
       links.find((link) =>
         link.querySelector("img.avatar")?.title?.includes("原始发帖人")
@@ -110,10 +118,10 @@ export default apiInitializer("1.34.0", (api) => {
 
     const latestPoster = links.find((link) => link.classList.contains("latest")) || originalPoster;
 
-    const leftAvatar = cloneAvatarLink(originalPoster, "graceful-topic-list-avatar-left");
-    const latestAvatar = cloneAvatarLink(latestPoster, "graceful-topic-list-avatar-right");
+    const opAvatarLink = cloneAvatarLink(originalPoster, "gf-op-avatar-link", 40);
+    const latestAvatarLink = cloneAvatarLink(latestPoster, "gf-last-avatar-link", 24);
 
-    if (!leftAvatar || !latestAvatar) {
+    if (!opAvatarLink || !latestAvatarLink) {
       return;
     }
 
@@ -121,31 +129,38 @@ export default apiInitializer("1.34.0", (api) => {
     const hasReplies = postsCount > 0;
     const bottomLine = mainLink.querySelector(".link-bottom-line");
 
-    const content = document.createElement("div");
-    content.className = "graceful-topic-list-content";
+    const avatar = document.createElement("div");
+    avatar.className = "gf-op-avatar";
+    avatar.append(opAvatarLink);
 
-    const stats = buildStats(row);
-    const latest = buildLatest(row, latestAvatar, hasReplies);
+    const copy = document.createElement("div");
+    copy.className = "gf-topic-copy";
 
-    const layout = document.createElement("div");
-    layout.className = "graceful-topic-list-layout";
-
-    mainLink.colSpan = 5;
-    titleLine.parentNode.insertBefore(layout, titleLine);
-    content.append(titleLine);
+    const title = document.createElement("div");
+    title.className = "gf-topic-title";
+    title.append(titleLine);
+    copy.append(title);
 
     if (bottomLine) {
-      content.append(bottomLine);
+      bottomLine.classList.add("gf-topic-meta");
+      copy.append(bottomLine);
     }
 
-    layout.append(leftAvatar, content, stats, latest);
-    row.classList.add("graceful-topic-list-v2-row");
+    const stats = buildStats(row);
+    const latest = buildLatest(row, latestAvatarLink, hasReplies);
+
+    const rowLayout = document.createElement("div");
+    rowLayout.className = "gf-topic-row";
+    rowLayout.append(avatar, copy, stats, latest);
+
+    mainLink.classList.add("gf-topic-cell");
+    mainLink.colSpan = 5;
+    mainLink.append(rowLayout);
+    row.classList.add("gf-topic-list-v2-row");
   }
 
   function decorateTopicRows() {
-    document
-      .querySelectorAll("tr.topic-list-item")
-      .forEach((row) => decorateTopicRow(row));
+    document.querySelectorAll("tr.topic-list-item").forEach(decorateTopicRow);
   }
 
   api.onPageChange(() => {
