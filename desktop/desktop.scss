@@ -145,28 +145,7 @@ nav.post-controls {
     font-weight: normal;
   }
 
-  .main-link .pull-left,
-  .topic-list-item .pull-left {
-    display: block !important;
-    float: left;
-    width: 40px;
-    height: 40px;
-    margin: 0 10px 0 0;
-    line-height: 0;
-  }
-
-  .main-link .pull-left img.avatar,
-  .topic-list-item .pull-left img.avatar {
-    width: 40px;
-    height: 40px;
-    max-width: 40px;
-    max-height: 40px;
-    margin-top: 0;
-    object-fit: cover;
-  }
-
   .sortable:hover {
-    // sortable column headers
     border-radius: 4px 4px 0 0;
     background: var(--tertiary-low);
     color: var(--tertiary);
@@ -296,7 +275,6 @@ nav.post-controls {
   }
 }
 
-// sidebar
 :root {
   --d-sidebar-prefix-background: var(--tertiary-low);
   --d-sidebar-highlight-background: var(--tertiary-low);
@@ -342,10 +320,184 @@ body.has-sidebar-page {
 }
 
 .sidebar-section-header {
-  border: none !important; // button rule upstream is very specific
+  border: none !important;
 }
 
-// chat
 body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   gap: 2em;
+}
+
+// Topic list v2. Desktop reuses the mobile-like left block
+// (.pull-left + .topic-item-metadata.right + .main-link + .topic-item-stats),
+// then extends it with desktop-only stats and latest reply columns.
+.topic-list {
+  .gf-topic-list-v2-row {
+    > td.posters,
+    > td.posts,
+    > td.views,
+    > td.activity {
+      display: none;
+    }
+
+    > td.gf-topic-cell {
+      box-sizing: border-box;
+      padding: var(--gf-topic-row-padding-block, 20px) var(--gf-topic-row-padding-inline, 5px);
+      width: 100%;
+    }
+  }
+
+  .gf-topic-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 104px 240px;
+    align-items: start;
+    column-gap: var(--gf-topic-avatar-gap, 10px);
+    width: 100%;
+  }
+
+  .gf-topic-left {
+    display: block;
+    min-width: 0;
+  }
+
+  .gf-topic-left .pull-left {
+    display: block !important;
+    float: left;
+    width: var(--gf-topic-avatar-size, 40px);
+    height: var(--gf-topic-avatar-size, 40px);
+    margin: 0 var(--gf-topic-avatar-gap, 10px) 0 0;
+    line-height: 0;
+  }
+
+  .gf-topic-left .pull-left img.avatar {
+    width: var(--gf-topic-avatar-size, 40px);
+    height: var(--gf-topic-avatar-size, 40px);
+    max-width: var(--gf-topic-avatar-size, 40px);
+    max-height: var(--gf-topic-avatar-size, 40px);
+    margin-top: 0;
+    object-fit: cover;
+  }
+
+  .gf-topic-left .topic-item-metadata.right {
+    min-width: 0;
+    min-height: var(--gf-topic-avatar-size, 40px);
+    margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
+  }
+
+  .gf-topic-left .main-link,
+  .gf-topic-title {
+    min-width: 0;
+    padding: 0;
+    line-height: var(--gf-topic-title-line-height, 1.2);
+  }
+
+  .gf-topic-left .link-top-line {
+    display: block;
+    min-width: 0;
+  }
+
+  .gf-topic-left .title {
+    overflow-wrap: anywhere;
+  }
+
+  .gf-topic-left .topic-item-stats,
+  .gf-topic-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--gf-topic-meta-row-gap, 4px) var(--gf-topic-meta-column-gap, 8px);
+    min-width: 0;
+    margin-top: var(--gf-topic-title-meta-gap, 7px);
+    font-size: var(--gf-topic-meta-font-size, 0.86em);
+    line-height: var(--gf-topic-meta-line-height, 1.2);
+    color: var(--primary-medium);
+  }
+
+  .gf-desktop-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    align-items: start;
+    min-width: 0;
+    padding-top: 0;
+  }
+
+  .gf-stat-box {
+    min-width: 0;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .gf-stat-number {
+    display: block;
+    font-size: 1.05em;
+    color: var(--primary);
+  }
+
+  .gf-stat-label {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.64em;
+    letter-spacing: 0.04em;
+    color: var(--primary-medium);
+  }
+
+  .gf-last-post-summary {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    column-gap: 8px;
+    align-items: start;
+    min-width: 0;
+    padding-top: 0;
+  }
+
+  .gf-last-post-summary.gf-no-reply-summary {
+    display: flex;
+    align-items: flex-start;
+    color: var(--primary-medium);
+    font-size: 0.82em;
+    line-height: 1.2;
+  }
+
+  .gf-last-avatar-inline,
+  .gf-last-avatar-inline a {
+    display: block;
+    width: 24px;
+    height: 24px;
+    line-height: 0;
+  }
+
+  .gf-last-avatar-inline img.avatar {
+    width: 24px;
+    height: 24px;
+    max-width: 24px;
+    max-height: 24px;
+    object-fit: cover;
+  }
+
+  .gf-last-reply-copy {
+    min-width: 0;
+  }
+
+  .gf-last-date {
+    color: var(--primary-medium);
+    font-size: 0.82em;
+    line-height: 1.2;
+  }
+
+  .gf-last-reply-excerpt {
+    margin-top: 4px;
+    color: var(--primary-medium);
+    font-size: 0.82em;
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@media screen and (width <= 900px) {
+  .topic-list .gf-topic-row {
+    grid-template-columns: minmax(0, 1fr) 88px 180px;
+  }
 }
