@@ -145,6 +145,26 @@ nav.post-controls {
     font-weight: normal;
   }
 
+  .main-link .pull-left,
+  .topic-list-item .pull-left {
+    display: block !important;
+    float: left;
+    width: 40px;
+    height: 40px;
+    margin: 0 10px 0 0;
+    line-height: 0;
+  }
+
+  .main-link .pull-left img.avatar,
+  .topic-list-item .pull-left img.avatar {
+    width: 40px;
+    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    margin-top: 0;
+    object-fit: cover;
+  }
+
   .sortable:hover {
     // sortable column headers
     border-radius: 4px 4px 0 0;
