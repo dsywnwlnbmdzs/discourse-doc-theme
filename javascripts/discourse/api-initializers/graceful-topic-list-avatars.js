@@ -1,6 +1,34 @@
 import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.34.0", (api) => {
+  function topicLookup() {
+    try {
+      const holder = document.querySelector("#data-preloaded");
+      if (!holder?.dataset?.preloaded) {
+        return {};
+      }
+
+      const preloaded = JSON.parse(holder.dataset.preloaded);
+      const payload = JSON.parse(preloaded.topic_list || "{}");
+      const topics = {};
+
+      for (const topic of payload.topic_list?.topics || []) {
+        topics[topic.id] = {
+          replyCount: topic.reply_count ?? 0,
+          views: topic.views ?? 0,
+          lastPosterUsername: topic.last_poster_username || "",
+          creatorUsername: topic.creator_username || "",
+          bumpedAt: topic.bumped_at || topic.last_posted_at || topic.created_at || "",
+          createdAt: topic.created_at || "",
+        };
+      }
+
+      return topics;
+    } catch (_e) {
+      return {};
+    }
+  }
+
   function avatarLinks(posters) {
     return Array.from(posters.querySelectorAll("a")).filter((link) =>
       link.querySelector("img.avatar")
@@ -166,17 +194,59 @@ export default apiInitializer("1.34.0", (api) => {
     row.classList.add("gf-topic-list-v2-row");
   }
 
+  function patchMobileStats() {
+    if (!document.documentElement.classList.contains("mobile-view")) {
+      document.querySelectorAll(".gf-mobile-views-badge").forEach((node) => node.remove());
+      return;
+    }
+
+    const topics = topicLookup();
+
+    document
+      .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
+      .forEach((row) => {
+        const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
+        const topic = topics[topicId] || {};
+        const pullRight = row.querySelector(".pull-right");
+
+        if (!pullRight) {
+          return;
+        }
+
+        let viewsBadge = pullRight.querySelector(".gf-mobile-views-badge");
+        if (!viewsBadge) {
+          viewsBadge = document.createElement("span");
+          viewsBadge.className = "gf-mobile-views-badge";
+          pullRight.append(viewsBadge);
+        }
+
+        const views = topic.views ?? "";
+        viewsBadge.textContent = String(views);
+        viewsBadge.title = `浏览数：${views}`;
+        viewsBadge.setAttribute("aria-label", `浏览数：${views}`);
+      });
+  }
+
   function decorateDesktopTopicRows() {
+    if (document.documentElement.classList.contains("mobile-view")) {
+      return;
+    }
+
     document.querySelectorAll("tr.topic-list-item").forEach(decorateDesktopTopicRow);
   }
 
+  function syncTopicRows() {
+    decorateDesktopTopicRows();
+    patchMobileStats();
+  }
+
   api.onPageChange(() => {
-    requestAnimationFrame(decorateDesktopTopicRows);
-    setTimeout(decorateDesktopTopicRows, 250);
+    requestAnimationFrame(syncTopicRows);
+    setTimeout(syncTopicRows, 250);
   });
 
   const observer = new MutationObserver(() => {
-    requestAnimationFrame(decorateDesktopTopicRows);
+    requestAnimationFrame(syncTopicRows);
   });
 
   api.onPageChange(() => {
