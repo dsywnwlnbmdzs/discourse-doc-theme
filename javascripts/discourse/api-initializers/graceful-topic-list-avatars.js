@@ -58,29 +58,41 @@ export default apiInitializer("1.34.0", (api) => {
     return row.querySelector(`${selector} .number`)?.textContent?.trim() || "0";
   }
 
+  function findOriginalPosterLink(links) {
+    return (
+      links.find((link) =>
+        link.querySelector("img.avatar")?.title?.includes("原始发帖人")
+      ) || links[0]
+    );
+  }
+
+  function findLatestPosterLink(links, fallback) {
+    return links.find((link) => link.classList.contains("latest")) || fallback;
+  }
+
+  function buildStatBox(name, value, label) {
+    const item = document.createElement("div");
+    item.className = `gf-stat-box gf-stat-${name}`;
+
+    const number = document.createElement("span");
+    number.className = "gf-stat-number";
+    number.textContent = value;
+
+    const text = document.createElement("span");
+    text.className = "gf-stat-label";
+    text.textContent = label;
+
+    item.append(number, text);
+    return item;
+  }
+
   function buildDesktopStats(row) {
     const stats = document.createElement("div");
     stats.className = "gf-desktop-stats";
-
-    [
-      ["posts", cellNumber(row, "td.posts"), "POSTS"],
-      ["views", cellNumber(row, "td.views"), "VIEWS"],
-    ].forEach(([name, value, label]) => {
-      const item = document.createElement("div");
-      item.className = `gf-stat-box gf-stat-${name}`;
-
-      const number = document.createElement("span");
-      number.className = "gf-stat-number";
-      number.textContent = value;
-
-      const text = document.createElement("span");
-      text.className = "gf-stat-label";
-      text.textContent = label;
-
-      item.append(number, text);
-      stats.append(item);
-    });
-
+    stats.append(
+      buildStatBox("posts", cellNumber(row, "td.posts"), "POSTS"),
+      buildStatBox("views", cellNumber(row, "td.views"), "VIEWS")
+    );
     return stats;
   }
 
@@ -119,11 +131,10 @@ export default apiInitializer("1.34.0", (api) => {
 
     copy.append(head, excerpt);
     latest.append(avatarWrap, copy);
-
     return latest;
   }
 
-  function buildMobileLikeLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink) {
+  function buildSharedLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink) {
     const avatar = document.createElement("div");
     avatar.className = "pull-left gf-op-avatar";
     avatar.append(opAvatarLink);
@@ -131,10 +142,10 @@ export default apiInitializer("1.34.0", (api) => {
     const metadata = document.createElement("div");
     metadata.className = "topic-item-metadata right gf-topic-copy";
 
-    const mobileTitle = document.createElement("div");
-    mobileTitle.className = "main-link gf-topic-title";
-    mobileTitle.append(titleLine);
-    metadata.append(mobileTitle);
+    const title = document.createElement("div");
+    title.className = "main-link gf-topic-title";
+    title.append(titleLine);
+    metadata.append(title);
 
     if (bottomLine) {
       bottomLine.classList.add("topic-item-stats", "clearfix", "gf-topic-meta");
@@ -149,7 +160,7 @@ export default apiInitializer("1.34.0", (api) => {
     return left;
   }
 
-  function decorateDesktopTopicRow(row) {
+  function decorateDesktopRow(row) {
     const mainLink = row.querySelector("td.main-link");
     const posters = row.querySelector("td.posters");
     const titleLine = mainLink?.querySelector(".link-top-line");
@@ -163,13 +174,8 @@ export default apiInitializer("1.34.0", (api) => {
       return;
     }
 
-    const originalPoster =
-      links.find((link) =>
-        link.querySelector("img.avatar")?.title?.includes("原始发帖人")
-      ) || links[0];
-
-    const latestPoster = links.find((link) => link.classList.contains("latest")) || originalPoster;
-
+    const originalPoster = findOriginalPosterLink(links);
+    const latestPoster = findLatestPosterLink(links, originalPoster);
     const opAvatarLink = cloneAvatarLink(originalPoster, "gf-op-avatar-link", 40);
     const latestAvatarLink = cloneAvatarLink(latestPoster, "gf-last-avatar-link", 24);
 
@@ -178,23 +184,30 @@ export default apiInitializer("1.34.0", (api) => {
     }
 
     const postsCount = Number.parseInt(cellNumber(row, "td.posts"), 10) || 0;
-    const hasReplies = postsCount > 0;
     const bottomLine = mainLink.querySelector(".link-bottom-line");
-
-    const left = buildMobileLikeLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink);
-    const desktopStats = buildDesktopStats(row);
-    const latest = buildLatest(row, latestAvatarLink, hasReplies);
 
     const rowLayout = document.createElement("div");
     rowLayout.className = "gf-topic-row";
-    rowLayout.append(left, desktopStats, latest);
+    rowLayout.append(
+      buildSharedLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink),
+      buildDesktopStats(row),
+      buildLatest(row, latestAvatarLink, postsCount > 0)
+    );
 
     mainLink.colSpan = 5;
     mainLink.append(rowLayout);
     row.classList.add("gf-topic-list-v2-row");
   }
 
-  function patchMobileStats() {
+  function decorateDesktopRows() {
+    if (document.documentElement.classList.contains("mobile-view")) {
+      return;
+    }
+
+    document.querySelectorAll("tr.topic-list-item").forEach(decorateDesktopRow);
+  }
+
+  function decorateMobileStats() {
     if (!document.documentElement.classList.contains("mobile-view")) {
       document.querySelectorAll(".gf-mobile-views-badge").forEach((node) => node.remove());
       return;
@@ -206,7 +219,7 @@ export default apiInitializer("1.34.0", (api) => {
       .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
       .forEach((row) => {
         const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
-        const topic = topics[topicId] || {};
+        const views = topics[topicId]?.views ?? "";
         const pullRight = row.querySelector(".pull-right");
 
         if (!pullRight) {
@@ -220,24 +233,15 @@ export default apiInitializer("1.34.0", (api) => {
           pullRight.append(viewsBadge);
         }
 
-        const views = topic.views ?? "";
         viewsBadge.textContent = String(views);
         viewsBadge.title = `浏览数：${views}`;
         viewsBadge.setAttribute("aria-label", `浏览数：${views}`);
       });
   }
 
-  function decorateDesktopTopicRows() {
-    if (document.documentElement.classList.contains("mobile-view")) {
-      return;
-    }
-
-    document.querySelectorAll("tr.topic-list-item").forEach(decorateDesktopTopicRow);
-  }
-
   function syncTopicRows() {
-    decorateDesktopTopicRows();
-    patchMobileStats();
+    decorateDesktopRows();
+    decorateMobileStats();
   }
 
   api.onPageChange(() => {
