@@ -80,6 +80,19 @@ pre {
 :root {
   --d-hover: var(--tertiary-low);
 
+  // Topic list shared rhythm tokens. Desktop and mobile use different DOM,
+  // but the left avatar + title/meta block should feel identical.
+  --gf-topic-avatar-size: 40px;
+  --gf-topic-avatar-gap: 10px;
+  --gf-topic-title-meta-gap: 7px;
+  --gf-topic-title-line-height: 1.2;
+  --gf-topic-meta-font-size: 0.86em;
+  --gf-topic-meta-line-height: 1.2;
+  --gf-topic-meta-row-gap: 4px;
+  --gf-topic-meta-column-gap: 8px;
+  --gf-topic-row-padding-block: 20px;
+  --gf-topic-row-padding-inline: 5px;
+
   // .btn-default
   --d-button-default-text-color: var(--primary);
   --d-button-default-text-color--hover: var(--tertiary);
