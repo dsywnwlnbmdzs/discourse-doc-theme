@@ -1,15 +1,13 @@
 import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.34.0", (api) => {
-  const AVATAR_SIZE = 40;
-
   function avatarLinks(posters) {
     return Array.from(posters.querySelectorAll("a")).filter((link) =>
       link.querySelector("img.avatar")
     );
   }
 
-  function cloneAvatarLink(sourceLink, className, size = AVATAR_SIZE) {
+  function cloneAvatarLink(sourceLink, className, size) {
     if (!sourceLink) {
       return null;
     }
@@ -32,7 +30,7 @@ export default apiInitializer("1.34.0", (api) => {
     return row.querySelector(`${selector} .number`)?.textContent?.trim() || "0";
   }
 
-  function buildStats(row) {
+  function buildDesktopStats(row) {
     const stats = document.createElement("div");
     stats.className = "gf-desktop-stats";
 
@@ -97,6 +95,32 @@ export default apiInitializer("1.34.0", (api) => {
     return latest;
   }
 
+  function buildMobileLikeLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink) {
+    const avatar = document.createElement("div");
+    avatar.className = "pull-left gf-op-avatar";
+    avatar.append(opAvatarLink);
+
+    const metadata = document.createElement("div");
+    metadata.className = "topic-item-metadata right gf-topic-copy";
+
+    const mobileTitle = document.createElement("div");
+    mobileTitle.className = "main-link gf-topic-title";
+    mobileTitle.append(titleLine);
+    metadata.append(mobileTitle);
+
+    if (bottomLine) {
+      bottomLine.classList.add("topic-item-stats", "clearfix", "gf-topic-meta");
+      metadata.append(bottomLine);
+    }
+
+    const left = document.createElement("div");
+    left.className = "gf-topic-left";
+    left.append(avatar, metadata);
+
+    mainLink.classList.add("gf-topic-cell");
+    return left;
+  }
+
   function decorateTopicRow(row) {
     const mainLink = row.querySelector("td.main-link");
     const posters = row.querySelector("td.posters");
@@ -129,31 +153,14 @@ export default apiInitializer("1.34.0", (api) => {
     const hasReplies = postsCount > 0;
     const bottomLine = mainLink.querySelector(".link-bottom-line");
 
-    const avatar = document.createElement("div");
-    avatar.className = "gf-op-avatar";
-    avatar.append(opAvatarLink);
-
-    const copy = document.createElement("div");
-    copy.className = "gf-topic-copy";
-
-    const title = document.createElement("div");
-    title.className = "gf-topic-title";
-    title.append(titleLine);
-    copy.append(title);
-
-    if (bottomLine) {
-      bottomLine.classList.add("gf-topic-meta");
-      copy.append(bottomLine);
-    }
-
-    const stats = buildStats(row);
+    const left = buildMobileLikeLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink);
+    const desktopStats = buildDesktopStats(row);
     const latest = buildLatest(row, latestAvatarLink, hasReplies);
 
     const rowLayout = document.createElement("div");
     rowLayout.className = "gf-topic-row";
-    rowLayout.append(avatar, copy, stats, latest);
+    rowLayout.append(left, desktopStats, latest);
 
-    mainLink.classList.add("gf-topic-cell");
     mainLink.colSpan = 5;
     mainLink.append(rowLayout);
     row.classList.add("gf-topic-list-v2-row");
