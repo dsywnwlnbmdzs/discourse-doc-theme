@@ -1,6 +1,8 @@
 import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.34.0", (api) => {
+  const excerptCache = new Map();
+
   function topicLookup() {
     try {
       const holder = document.querySelector("#data-preloaded");
@@ -96,6 +98,66 @@ export default apiInitializer("1.34.0", (api) => {
     return stats;
   }
 
+  function plainTextFromCooked(cooked) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = cooked || "";
+    return (wrapper.textContent || "").replace(/\s+/g, " ").trim();
+  }
+
+  function excerptJsonUrl(link) {
+    if (!link) {
+      return null;
+    }
+
+    const href = link.getAttribute("href") || "";
+    if (!href || href === "#") {
+      return null;
+    }
+
+    return href.endsWith(".json") ? href : `${href}.json`;
+  }
+
+  async function loadLastReplyExcerpt(row, excerptNode, activityLink) {
+    const url = excerptJsonUrl(activityLink);
+    if (!url || excerptNode.dataset.gfExcerptLoading === "true") {
+      return;
+    }
+
+    if (excerptCache.has(url)) {
+      excerptNode.textContent = excerptCache.get(url);
+      excerptNode.dataset.gfExcerptLoaded = "true";
+      return;
+    }
+
+    excerptNode.dataset.gfExcerptLoading = "true";
+
+    try {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      const posts = data?.post_stream?.posts || [];
+      const lastPost = posts[posts.length - 1];
+      const excerpt = plainTextFromCooked(lastPost?.cooked).slice(0, 80);
+
+      if (excerpt) {
+        excerptCache.set(url, excerpt);
+        excerptNode.textContent = excerpt;
+        excerptNode.dataset.gfExcerptLoaded = "true";
+      }
+    } catch (_e) {
+      // Keep the latest area usable even if the excerpt endpoint is unavailable.
+    } finally {
+      delete excerptNode.dataset.gfExcerptLoading;
+    }
+  }
+
   function buildLatest(row, latestAvatar, hasReplies) {
     const latest = document.createElement("div");
     latest.className = hasReplies
@@ -131,6 +193,11 @@ export default apiInitializer("1.34.0", (api) => {
 
     copy.append(head, excerpt);
     latest.append(avatarWrap, copy);
+
+    if (activityLink) {
+      requestAnimationFrame(() => loadLastReplyExcerpt(row, excerpt, activityLink));
+    }
+
     return latest;
   }
 
