@@ -121,7 +121,7 @@ export default apiInitializer("1.34.0", (api) => {
     return left;
   }
 
-  function decorateTopicRow(row) {
+  function decorateDesktopTopicRow(row) {
     const mainLink = row.querySelector("td.main-link");
     const posters = row.querySelector("td.posters");
     const titleLine = mainLink?.querySelector(".link-top-line");
@@ -166,17 +166,17 @@ export default apiInitializer("1.34.0", (api) => {
     row.classList.add("gf-topic-list-v2-row");
   }
 
-  function decorateTopicRows() {
-    document.querySelectorAll("tr.topic-list-item").forEach(decorateTopicRow);
+  function decorateDesktopTopicRows() {
+    document.querySelectorAll("tr.topic-list-item").forEach(decorateDesktopTopicRow);
   }
 
   api.onPageChange(() => {
-    requestAnimationFrame(decorateTopicRows);
-    setTimeout(decorateTopicRows, 250);
+    requestAnimationFrame(decorateDesktopTopicRows);
+    setTimeout(decorateDesktopTopicRows, 250);
   });
 
   const observer = new MutationObserver(() => {
-    requestAnimationFrame(decorateTopicRows);
+    requestAnimationFrame(decorateDesktopTopicRows);
   });
 
   api.onPageChange(() => {
