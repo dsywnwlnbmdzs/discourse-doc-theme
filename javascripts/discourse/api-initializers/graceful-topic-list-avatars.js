@@ -3,6 +3,12 @@ import { apiInitializer } from "discourse/lib/api";
 export default apiInitializer("1.34.0", (api) => {
   const AVATAR_SIZE = 40;
 
+  function avatarLinks(posters) {
+    return Array.from(posters.querySelectorAll("a")).filter((link) =>
+      link.querySelector("img.avatar")
+    );
+  }
+
   function cloneAvatarLink(sourceLink, className) {
     if (!sourceLink) {
       return null;
@@ -18,6 +24,7 @@ export default apiInitializer("1.34.0", (api) => {
       avatar.width = AVATAR_SIZE;
       avatar.height = AVATAR_SIZE;
       avatar.classList.add("graceful-topic-list-avatar-image");
+      avatar.classList.remove("latest");
     }
 
     return clone;
@@ -32,19 +39,19 @@ export default apiInitializer("1.34.0", (api) => {
       return;
     }
 
-    const posterLinks = Array.from(posters.querySelectorAll("a:has(img.avatar)"));
-    if (!posterLinks.length) {
+    const links = avatarLinks(posters);
+    if (!links.length) {
       return;
     }
 
     mainLink.querySelector(".graceful-topic-list-layout")?.remove();
 
     const originalPoster =
-      posterLinks.find((link) =>
+      links.find((link) =>
         link.querySelector("img.avatar")?.title?.includes("原始发帖人")
-      ) || posterLinks[0];
+      ) || links[0];
 
-    const latestPoster = posters.querySelector("a.latest:has(img.avatar)") || originalPoster;
+    const latestPoster = links.find((link) => link.classList.contains("latest")) || originalPoster;
 
     const leftAvatar = cloneAvatarLink(originalPoster, "graceful-topic-list-avatar-left");
     const rightAvatar = cloneAvatarLink(latestPoster, "graceful-topic-list-avatar-right");
@@ -57,6 +64,10 @@ export default apiInitializer("1.34.0", (api) => {
     const content = document.createElement("div");
     content.className = "graceful-topic-list-content";
 
+    const latest = document.createElement("div");
+    latest.className = "graceful-topic-list-latest";
+    latest.append(rightAvatar);
+
     const layout = document.createElement("div");
     layout.className = "graceful-topic-list-layout";
 
@@ -67,7 +78,7 @@ export default apiInitializer("1.34.0", (api) => {
       content.append(bottomLine);
     }
 
-    layout.append(leftAvatar, content, rightAvatar);
+    layout.append(leftAvatar, content, latest);
     row.classList.add("graceful-topic-list-avatar-row");
   }
 
