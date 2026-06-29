@@ -60,6 +60,18 @@ export default apiInitializer("1.34.0", (api) => {
     return row.querySelector(`${selector} .number`)?.textContent?.trim() || "0";
   }
 
+  function categoryColorFrom(root) {
+    const wrapper = root?.querySelector?.(".badge-category__wrapper");
+    const badge = wrapper?.querySelector?.(".badge-category");
+
+    return (
+      wrapper?.style?.getPropertyValue("--category-badge-color") ||
+      badge?.style?.getPropertyValue("--category-badge-color") ||
+      badge?.style?.getPropertyValue("--gf-marker-color") ||
+      ""
+    ).trim();
+  }
+
   function findOriginalPosterLink(links) {
     return (
       links.find((link) =>
@@ -252,9 +264,13 @@ export default apiInitializer("1.34.0", (api) => {
 
     const postsCount = Number.parseInt(cellNumber(row, "td.posts"), 10) || 0;
     const bottomLine = mainLink.querySelector(".link-bottom-line");
+    const categoryColor = categoryColorFrom(bottomLine || mainLink);
 
     const rowLayout = document.createElement("div");
     rowLayout.className = "gf-topic-row";
+    if (categoryColor) {
+      rowLayout.style.setProperty("--gf-topic-category-color", categoryColor);
+    }
     rowLayout.append(
       buildSharedLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink),
       buildDesktopStats(row),
