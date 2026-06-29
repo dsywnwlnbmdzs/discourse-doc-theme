@@ -216,6 +216,18 @@ img.avatar {
     color: var(--primary-medium);
   }
 
+  .topic-item-stats .badge-category__wrapper,
+  .topic-item-stats .badge-category,
+  .topic-item-stats .badge-category__name,
+  .topic-item-stats .badge-category .d-icon {
+    color: var(--category-badge-color) !important;
+  }
+
+  .topic-item-stats .badge-category.--style-square::before,
+  .topic-item-stats .badge-category.--style-bar::before {
+    background-color: var(--category-badge-color) !important;
+  }
+
   > tbody > tr:first-of-type {
     border-top: 3px solid transparent;
   }
