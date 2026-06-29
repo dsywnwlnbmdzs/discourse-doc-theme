@@ -1,6 +1,8 @@
 import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.34.0", (api) => {
+  const excerptCache = new Map();
+
   function topicLookup() {
     try {
       const holder = document.querySelector("#data-preloaded");
@@ -58,6 +60,18 @@ export default apiInitializer("1.34.0", (api) => {
     return row.querySelector(`${selector} .number`)?.textContent?.trim() || "0";
   }
 
+  function categoryColorFrom(root) {
+    const wrapper = root?.querySelector?.(".badge-category__wrapper");
+    const badge = wrapper?.querySelector?.(".badge-category");
+
+    return (
+      wrapper?.style?.getPropertyValue("--category-badge-color") ||
+      badge?.style?.getPropertyValue("--category-badge-color") ||
+      badge?.style?.getPropertyValue("--gf-marker-color") ||
+      ""
+    ).trim();
+  }
+
   function findOriginalPosterLink(links) {
     return (
       links.find((link) =>
@@ -96,6 +110,66 @@ export default apiInitializer("1.34.0", (api) => {
     return stats;
   }
 
+  function plainTextFromCooked(cooked) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = cooked || "";
+    return (wrapper.textContent || "").replace(/\s+/g, " ").trim();
+  }
+
+  function excerptJsonUrl(link) {
+    if (!link) {
+      return null;
+    }
+
+    const href = link.getAttribute("href") || "";
+    if (!href || href === "#") {
+      return null;
+    }
+
+    return href.endsWith(".json") ? href : `${href}.json`;
+  }
+
+  async function loadLastReplyExcerpt(row, excerptNode, activityLink) {
+    const url = excerptJsonUrl(activityLink);
+    if (!url || excerptNode.dataset.gfExcerptLoading === "true") {
+      return;
+    }
+
+    if (excerptCache.has(url)) {
+      excerptNode.textContent = excerptCache.get(url);
+      excerptNode.dataset.gfExcerptLoaded = "true";
+      return;
+    }
+
+    excerptNode.dataset.gfExcerptLoading = "true";
+
+    try {
+      const response = await fetch(url, {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      const posts = data?.post_stream?.posts || [];
+      const lastPost = posts[posts.length - 1];
+      const excerpt = plainTextFromCooked(lastPost?.cooked).slice(0, 80);
+
+      if (excerpt) {
+        excerptCache.set(url, excerpt);
+        excerptNode.textContent = excerpt;
+        excerptNode.dataset.gfExcerptLoaded = "true";
+      }
+    } catch (_e) {
+      // Keep the latest area usable even if the excerpt endpoint is unavailable.
+    } finally {
+      delete excerptNode.dataset.gfExcerptLoading;
+    }
+  }
+
   function buildLatest(row, latestAvatar, hasReplies) {
     const latest = document.createElement("div");
     latest.className = hasReplies
@@ -131,6 +205,11 @@ export default apiInitializer("1.34.0", (api) => {
 
     copy.append(head, excerpt);
     latest.append(avatarWrap, copy);
+
+    if (activityLink) {
+      requestAnimationFrame(() => loadLastReplyExcerpt(row, excerpt, activityLink));
+    }
+
     return latest;
   }
 
@@ -185,9 +264,13 @@ export default apiInitializer("1.34.0", (api) => {
 
     const postsCount = Number.parseInt(cellNumber(row, "td.posts"), 10) || 0;
     const bottomLine = mainLink.querySelector(".link-bottom-line");
+    const categoryColor = categoryColorFrom(bottomLine || mainLink);
 
     const rowLayout = document.createElement("div");
     rowLayout.className = "gf-topic-row";
+    if (categoryColor) {
+      rowLayout.style.setProperty("--gf-topic-category-color", categoryColor);
+    }
     rowLayout.append(
       buildSharedLeftBlock(mainLink, titleLine, bottomLine, opAvatarLink),
       buildDesktopStats(row),

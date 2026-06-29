@@ -412,31 +412,43 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
     color: var(--primary-medium);
   }
 
+  .gf-topic-left .badge-category__wrapper,
+  .gf-topic-left .badge-category,
+  .gf-topic-left .badge-category__name,
+  .gf-topic-left .badge-category .d-icon {
+    color: var(--category-badge-color) !important;
+  }
+
+  .gf-topic-left .badge-category.--style-square::before,
+  .gf-topic-left .badge-category.--style-bar::before {
+    background-color: var(--category-badge-color) !important;
+  }
+
   .gf-desktop-stats {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     align-items: start;
     min-width: 0;
-    padding-top: 0;
+    padding-top: 1px;
   }
 
   .gf-stat-box {
     min-width: 0;
     text-align: center;
-    line-height: 1.1;
+    line-height: 1.05;
   }
 
   .gf-stat-number {
     display: block;
-    font-size: 1.05em;
+    font-size: 1.04em;
     color: var(--primary);
   }
 
   .gf-stat-label {
     display: block;
-    margin-top: 3px;
-    font-size: 0.64em;
+    margin-top: 2px;
+    font-size: 0.62em;
     letter-spacing: 0.04em;
     color: var(--primary-medium);
   }
@@ -447,12 +459,15 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
     column-gap: 8px;
     align-items: start;
     min-width: 0;
+    min-height: 40px;
     padding-top: 0;
+    padding-left: 12px;
+    border-left: 3px solid var(--gf-topic-category-color, var(--tertiary));
   }
 
   .gf-last-post-summary.gf-no-reply-summary {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     color: var(--primary-medium);
     font-size: 0.82em;
     line-height: 1.2;
@@ -476,19 +491,20 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
 
   .gf-last-reply-copy {
     min-width: 0;
+    padding-top: 1px;
   }
 
   .gf-last-date {
     color: var(--primary-medium);
     font-size: 0.82em;
-    line-height: 1.2;
+    line-height: 1.15;
   }
 
   .gf-last-reply-excerpt {
-    margin-top: 4px;
+    margin-top: 3px;
     color: var(--primary-medium);
-    font-size: 0.82em;
-    line-height: 1.25;
+    font-size: 0.8em;
+    line-height: 1.22;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
