@@ -114,6 +114,7 @@ img.avatar {
     grid-template-areas:
       "title stats"
       "meta stats";
+    grid-template-rows: auto min-content;
     column-gap: 8px;
     align-items: start;
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
@@ -123,7 +124,7 @@ img.avatar {
 
   th,
   td {
-    padding: var(--gf-topic-row-padding-block, 20px) var(--gf-topic-row-padding-inline, 5px);
+    padding: 14px var(--gf-topic-row-padding-inline, 5px);
   }
 
   img.avatar {
@@ -140,12 +141,13 @@ img.avatar {
   .main-link {
     grid-area: title;
     min-width: 0;
-    padding-top: 0;
-    padding-right: 0;
+    padding: 0;
+    margin: 0;
     line-height: var(--gf-topic-title-line-height, 1.2);
   }
 
-  .main-link .title {
+  .main-link .title,
+  .topic-list-main-link a.title {
     overflow-wrap: anywhere;
   }
 
@@ -153,10 +155,10 @@ img.avatar {
     grid-area: stats;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
     align-items: center;
     justify-content: flex-start;
-    margin: 0;
+    margin: -1px 0 0;
   }
 
   .pull-right .num.posts {
@@ -184,6 +186,14 @@ img.avatar {
   }
 
   .pull-right .badge-posts .number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
     line-height: 1;
   }
 
@@ -202,7 +212,8 @@ img.avatar {
     flex-wrap: wrap;
     gap: var(--gf-topic-meta-row-gap, 4px) var(--gf-topic-meta-column-gap, 8px);
     min-width: 0;
-    margin-top: var(--gf-topic-title-meta-gap, 7px);
+    margin: 6px 0 0;
+    padding: 0;
     font-size: var(--gf-topic-meta-font-size, 0.86em);
     line-height: var(--gf-topic-meta-line-height, 1.2);
     color: var(--primary-medium);
@@ -210,6 +221,8 @@ img.avatar {
 
   .topic-item-stats__category-tags {
     min-width: 0;
+    margin: 0;
+    padding: 0;
   }
 
   .topic-item-stats .activity {
@@ -221,6 +234,12 @@ img.avatar {
   .topic-item-stats .badge-category__name,
   .topic-item-stats .badge-category .d-icon {
     color: var(--category-badge-color) !important;
+  }
+
+  .topic-item-stats .badge-category__wrapper,
+  .topic-item-stats .badge-category {
+    margin-left: 0;
+    padding-left: 0;
   }
 
   .topic-item-stats .badge-category.--style-square::before,
