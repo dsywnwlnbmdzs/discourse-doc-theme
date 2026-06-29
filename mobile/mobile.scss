@@ -109,9 +109,16 @@ img.avatar {
   }
 
   .right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 34px;
+    grid-template-areas:
+      "title stats"
+      "meta stats";
+    column-gap: 8px;
+    align-items: start;
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
     min-height: var(--gf-topic-avatar-size, 40px);
-    padding-right: 46px;
+    padding-right: 0;
   }
 
   th,
@@ -131,6 +138,8 @@ img.avatar {
   }
 
   .main-link {
+    grid-area: title;
+    min-width: 0;
     padding-top: 0;
     padding-right: 0;
     line-height: var(--gf-topic-title-line-height, 1.2);
@@ -141,12 +150,12 @@ img.avatar {
   }
 
   .pull-right {
-    position: absolute;
-    top: var(--gf-topic-row-padding-block, 20px);
-    right: 8px;
+    grid-area: stats;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    align-items: center;
+    justify-content: flex-start;
     margin: 0;
   }
 
@@ -169,11 +178,17 @@ img.avatar {
     background: var(--secondary);
     color: var(--primary-medium);
     font-size: 0.82em;
+    font-weight: 600;
     line-height: 1;
+    box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.04);
   }
 
   .pull-right .badge-posts .number {
     line-height: 1;
+  }
+
+  .pull-right .badge-posts {
+    color: var(--primary-medium);
   }
 
   .pull-right .gf-mobile-views-badge {
@@ -181,6 +196,7 @@ img.avatar {
   }
 
   .topic-item-stats {
+    grid-area: meta;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
