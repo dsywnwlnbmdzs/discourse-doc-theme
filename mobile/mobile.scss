@@ -178,11 +178,17 @@ img.avatar {
     background: var(--secondary);
     color: var(--primary-medium);
     font-size: 0.82em;
+    font-weight: 600;
     line-height: 1;
+    box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.04);
   }
 
   .pull-right .badge-posts .number {
     line-height: 1;
+  }
+
+  .pull-right .badge-posts {
+    color: var(--primary-medium);
   }
 
   .pull-right .gf-mobile-views-badge {
