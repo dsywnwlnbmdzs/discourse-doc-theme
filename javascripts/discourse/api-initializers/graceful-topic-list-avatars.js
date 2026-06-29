@@ -207,6 +207,41 @@ export default apiInitializer("1.34.0", (api) => {
     document.querySelectorAll("tr.topic-list-item").forEach(decorateDesktopRow);
   }
 
+  function setIfChanged(node, prop, value) {
+    if (node[prop] !== value) {
+      node[prop] = value;
+    }
+  }
+
+  function setAttributeIfChanged(node, name, value) {
+    if (node.getAttribute(name) !== value) {
+      node.setAttribute(name, value);
+    }
+  }
+
+  function ensureMobileViewsBadge(pullRight) {
+    let viewsBadge = pullRight.querySelector(".gf-mobile-views-badge");
+    if (!viewsBadge) {
+      viewsBadge = document.createElement("span");
+      viewsBadge.className = "gf-mobile-views-badge";
+      pullRight.append(viewsBadge);
+    }
+    return viewsBadge;
+  }
+
+  function updateMobileViewsBadge(viewsBadge, views) {
+    const value = String(views ?? "");
+
+    if (viewsBadge.dataset.gfViewsValue === value) {
+      return;
+    }
+
+    viewsBadge.dataset.gfViewsValue = value;
+    setIfChanged(viewsBadge, "textContent", value);
+    setIfChanged(viewsBadge, "title", `浏览数：${value}`);
+    setAttributeIfChanged(viewsBadge, "aria-label", `浏览数：${value}`);
+  }
+
   function decorateMobileStats() {
     if (!document.documentElement.classList.contains("mobile-view")) {
       document.querySelectorAll(".gf-mobile-views-badge").forEach((node) => node.remove());
@@ -226,31 +261,39 @@ export default apiInitializer("1.34.0", (api) => {
           return;
         }
 
-        let viewsBadge = pullRight.querySelector(".gf-mobile-views-badge");
-        if (!viewsBadge) {
-          viewsBadge = document.createElement("span");
-          viewsBadge.className = "gf-mobile-views-badge";
-          pullRight.append(viewsBadge);
-        }
-
-        viewsBadge.textContent = String(views);
-        viewsBadge.title = `浏览数：${views}`;
-        viewsBadge.setAttribute("aria-label", `浏览数：${views}`);
+        updateMobileViewsBadge(ensureMobileViewsBadge(pullRight), views);
       });
   }
 
+  let syncQueued = false;
+
   function syncTopicRows() {
+    syncQueued = false;
     decorateDesktopRows();
     decorateMobileStats();
   }
 
+  function scheduleSyncTopicRows(delay = 0) {
+    if (syncQueued) {
+      return;
+    }
+
+    syncQueued = true;
+
+    if (delay > 0) {
+      setTimeout(syncTopicRows, delay);
+    } else {
+      requestAnimationFrame(syncTopicRows);
+    }
+  }
+
   api.onPageChange(() => {
-    requestAnimationFrame(syncTopicRows);
-    setTimeout(syncTopicRows, 250);
+    scheduleSyncTopicRows();
+    scheduleSyncTopicRows(250);
   });
 
   const observer = new MutationObserver(() => {
-    requestAnimationFrame(syncTopicRows);
+    scheduleSyncTopicRows();
   });
 
   api.onPageChange(() => {
