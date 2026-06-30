@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.21 */
+/* Graceful Theme Doc Mod v11.0.22 */
 @import "common/foundation/variables";
 
 body {
@@ -135,10 +135,10 @@ img.avatar {
     padding-left: 8px !important;
     padding-right: 8px !important;
     overflow: hidden;
-    border: 5px solid var(--primary-300);
-    border-radius: 18px;
+    border: 1px solid rgb(var(--primary-rgb), 0.12);
+    border-radius: 12px;
     background: var(--secondary);
-    box-shadow: 1px 0 20px var(--primary-300);
+    box-shadow: 0 2px 9px rgba(0, 0, 0, 0.12);
   }
 
   img.avatar {
