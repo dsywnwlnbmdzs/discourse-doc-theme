@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.16 */
+/* Graceful Theme Doc Mod v11.0.17 */
 @import "common/foundation/variables";
 
 body {
@@ -15,9 +15,13 @@ body {
 }
 
 #main-outlet {
-  margin: 1em auto;
-  padding: 8px 10px 10px;
+  margin: 8px auto 1em;
+  padding: 10px 10px 10px;
   width: 96%;
+}
+
+.mobile-view .navigation-container {
+  margin-bottom: 0 !important;
 }
 
 .container.posts > .row {
