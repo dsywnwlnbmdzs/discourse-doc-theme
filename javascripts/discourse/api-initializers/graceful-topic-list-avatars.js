@@ -375,6 +375,11 @@ export default apiInitializer("1.34.0", (api) => {
     return Number(topic?.replyCount || 0) > 0;
   }
 
+  function mobileActionIconHtml(hasReply) {
+    const icon = hasReply ? "reply" : "far-pen-to-square";
+    return `<svg class="fa d-icon d-icon-${icon} svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#${icon}"></use></svg>`;
+  }
+
   function mobileTimeIconHtml() {
     return `<svg class="fa d-icon d-icon-clock svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#clock"></use></svg>`;
   }
@@ -386,11 +391,19 @@ export default apiInitializer("1.34.0", (api) => {
       status = document.createElement("span");
       status.className = "gf-mobile-meta-status";
       status.innerHTML = `
+        <span class="gf-mobile-action-icon" aria-hidden="true"></span>
         <a class="gf-mobile-meta-user" href="#" tabindex="0"></a>
       `;
       stats.insertBefore(status, activity || null);
     } else if (activity && status.nextElementSibling !== activity) {
       stats.insertBefore(status, activity);
+    }
+
+    if (!status.querySelector(":scope > .gf-mobile-action-icon")) {
+      const icon = document.createElement("span");
+      icon.className = "gf-mobile-action-icon";
+      icon.setAttribute("aria-hidden", "true");
+      status.prepend(icon);
     }
 
     return status;
@@ -441,10 +454,17 @@ export default apiInitializer("1.34.0", (api) => {
     const timeText = englishRelativeTime(timeSource);
 
     const status = ensureMobileMetaUser(stats, activity);
+    const icon = status.querySelector(".gf-mobile-action-icon");
     const user = status.querySelector(".gf-mobile-meta-user");
 
     status.classList.toggle("gf-mobile-meta-replied", hasReply);
     status.classList.toggle("gf-mobile-meta-started", !hasReply);
+
+    const iconState = hasReply ? "reply" : "start";
+    if (icon.dataset.gfIconState !== iconState) {
+      icon.dataset.gfIconState = iconState;
+      icon.innerHTML = mobileActionIconHtml(hasReply);
+    }
 
     if (username && user.dataset.gfUsername !== username) {
       user.dataset.gfUsername = username;
