@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.2 */
+/* Graceful Theme Doc Mod v11.0.3 */
 @import "common/foundation/variables";
 
 body {
@@ -115,7 +115,7 @@ img.avatar {
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
-    padding: 14px var(--gf-topic-row-padding-inline, 5px);
+    padding: 6px var(--gf-topic-row-padding-inline, 5px);
   }
 
   img.avatar {
@@ -134,7 +134,7 @@ img.avatar {
     display: block;
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
     min-height: var(--gf-topic-avatar-size, 40px);
-    padding-right: 42px;
+    padding-right: 34px;
   }
 
   .topic-item-metadata.right > .main-link,
@@ -184,12 +184,6 @@ img.avatar {
     color: var(--category-badge-color) !important;
   }
 
-  .topic-item-metadata.right > .topic-item-stats .badge-category__wrapper,
-  .topic-item-metadata.right > .topic-item-stats .badge-category {
-    margin-left: 0;
-    padding-left: 0;
-  }
-
   .topic-item-metadata.right > .topic-item-stats .badge-category.--style-square::before,
   .topic-item-metadata.right > .topic-item-stats .badge-category.--style-bar::before {
     background-color: var(--category-badge-color) !important;
@@ -201,7 +195,7 @@ img.avatar {
     right: 0;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
     align-items: center;
     justify-content: flex-start;
     margin: 0;
@@ -217,15 +211,15 @@ img.avatar {
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    width: 32px;
-    min-width: 32px;
-    height: 30px;
+    width: 28px;
+    min-width: 28px;
+    height: 24px;
     padding: 0;
     border: 1px solid var(--primary-low);
-    border-radius: 8px;
+    border-radius: 7px;
     background: var(--secondary);
     color: var(--primary-medium);
-    font-size: 0.82em;
+    font-size: 0.76em;
     font-weight: 600;
     line-height: 1;
     box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.04);
