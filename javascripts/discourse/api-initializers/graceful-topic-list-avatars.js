@@ -213,6 +213,7 @@ export default apiInitializer("1.34.0", (api) => {
     latest.className = hasReplies
       ? "gf-last-post-summary"
       : "gf-last-post-summary gf-no-reply-summary";
+    latest.style.display = hasReplies ? "block" : "flex";
 
     if (!hasReplies) {
       const noReply = document.createElement("div");
@@ -228,6 +229,9 @@ export default apiInitializer("1.34.0", (api) => {
 
     const head = document.createElement("div");
     head.className = "gf-last-reply-head";
+    head.style.display = "flex";
+    head.style.alignItems = "center";
+    head.style.gap = "8px";
     head.append(avatarWrap);
 
     const activityLink = row.querySelector("td.activity .post-activity")?.cloneNode(true);
@@ -239,6 +243,8 @@ export default apiInitializer("1.34.0", (api) => {
 
     const excerpt = document.createElement("div");
     excerpt.className = "gf-last-reply-excerpt";
+    excerpt.style.marginTop = "4px";
+    excerpt.style.paddingLeft = "0";
 
     latest.append(head, excerpt);
 
@@ -314,6 +320,8 @@ export default apiInitializer("1.34.0", (api) => {
     );
 
     mainLink.colSpan = 5;
+    mainLink.style.paddingTop = "6px";
+    mainLink.style.paddingBottom = "6px";
     mainLink.append(rowLayout);
     row.classList.add("gf-topic-list-v2-row");
   }
