@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.17 */
+/* Graceful Theme Doc Mod v11.0.18 */
 @import "common/foundation/variables";
 
 body {
@@ -114,10 +114,9 @@ img.avatar {
 
   tbody.topic-list-body > tr.topic-list-item {
     border: 5px solid var(--primary-300);
-    border-radius: 11px;
+    border-radius: 16px;
     background: var(--secondary);
-    box-shadow: 1px 0px 20px var(--primary-300);
-    
+    box-shadow: 1px 0 20px var(--primary-300);
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
@@ -139,25 +138,42 @@ img.avatar {
   }
 
   .topic-item-metadata.right > .topic-item-stats {
+    flex-wrap: nowrap;
+    overflow: hidden;
+    white-space: nowrap;
     column-gap: 3px;
   }
 
   .topic-item-metadata.right > .topic-item-stats .topic-item-stats__category-tags {
+    flex: 0 0 auto;
     margin-right: 2px;
+    min-width: 0;
   }
 
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-status {
     display: inline-flex;
     align-items: center;
+    flex: 1 1 auto;
     gap: 2px;
     min-width: 0;
     margin-left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-author,
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-state {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: clip;
   }
 
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-action-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 auto;
     width: 0.82em;
     height: 0.82em;
     margin-right: 0;
@@ -185,6 +201,13 @@ img.avatar {
   .topic-item-metadata.right > .topic-item-stats .num.activity::before {
     content: none !important;
     display: none !important;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time::before {
