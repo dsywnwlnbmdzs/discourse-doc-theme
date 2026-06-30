@@ -3,19 +3,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet">
 
 <style>
-/* Graceful Theme Doc Mod v11.0.6 supplemental common styles */
-.topic-list .badge-category.--style-square::before,
-.topic-list .badge-category.--style-bar::before {
+/* Graceful Theme Doc Mod v11.0.7 supplemental common styles */
+.topic-list .link-bottom-line.topic-item-stats::before,
+.topic-list .gf-topic-meta::before,
+.topic-list .topic-item-metadata.right > .topic-item-stats::before {
   display: none !important;
   content: none !important;
 }
 
-.topic-list .badge-category,
-.topic-list .badge-category__name,
-.topic-list .gf-meta-author,
-.topic-list .gf-created-at,
-.topic-list .gf-last-date,
-.topic-list .relative-date {
+.topic-list .gf-topic-meta,
+.topic-list .gf-topic-meta .badge-category,
+.topic-list .gf-topic-meta .badge-category__name,
+.topic-list .gf-topic-meta .relative-date,
+.topic-list .gf-topic-meta .gf-meta-author,
+.topic-list .gf-topic-meta .gf-created-at,
+.topic-list .topic-item-metadata.right > .topic-item-stats,
+.topic-list .topic-item-metadata.right > .topic-item-stats .badge-category,
+.topic-list .topic-item-metadata.right > .topic-item-stats .badge-category__name,
+.topic-list .topic-item-metadata.right > .topic-item-stats .relative-date {
   font-family: "Bruno Ace SC", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -24,9 +29,12 @@
   letter-spacing: 0.01em;
 }
 
-.topic-list .badge-category__wrapper,
-.topic-list .badge-category,
-.topic-list .badge-category__name {
+.topic-list .gf-topic-meta .badge-category__wrapper,
+.topic-list .gf-topic-meta .badge-category,
+.topic-list .gf-topic-meta .badge-category__name,
+.topic-list .topic-item-metadata.right > .topic-item-stats .badge-category__wrapper,
+.topic-list .topic-item-metadata.right > .topic-item-stats .badge-category,
+.topic-list .topic-item-metadata.right > .topic-item-stats .badge-category__name {
   color: var(--category-badge-color) !important;
 }
 </style>
