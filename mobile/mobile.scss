@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.3 */
+/* Graceful Theme Doc Mod v11.0.4 */
 @import "common/foundation/variables";
 
 body {
@@ -115,7 +115,7 @@ img.avatar {
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
-    padding: 6px var(--gf-topic-row-padding-inline, 5px);
+    padding: 8px var(--gf-topic-row-padding-inline, 5px);
   }
 
   img.avatar {
@@ -134,7 +134,7 @@ img.avatar {
     display: block;
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
     min-height: var(--gf-topic-avatar-size, 40px);
-    padding-right: 34px;
+    padding-right: 30px;
   }
 
   .topic-item-metadata.right > .main-link,
@@ -158,7 +158,7 @@ img.avatar {
     flex-wrap: wrap;
     gap: var(--gf-topic-meta-row-gap, 4px) var(--gf-topic-meta-column-gap, 8px);
     min-width: 0;
-    margin: 6px 0 0;
+    margin: var(--gf-topic-title-meta-gap, 6px) 0 0;
     padding: 0;
     font-size: var(--gf-topic-meta-font-size, 0.86em);
     line-height: var(--gf-topic-meta-line-height, 1.2);
@@ -191,13 +191,16 @@ img.avatar {
 
   .topic-item-metadata.right > .pull-right {
     position: absolute;
-    top: 0;
+    top: 50%;
     right: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    transform: translateY(-50%);
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: 22px;
+    row-gap: 4px;
+    justify-items: center;
     align-items: center;
-    justify-content: flex-start;
+    width: 26px;
     margin: 0;
   }
 
@@ -207,38 +210,32 @@ img.avatar {
 
   .topic-item-metadata.right > .pull-right .badge-posts,
   .topic-item-metadata.right > .pull-right .gf-mobile-views-badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     box-sizing: border-box;
-    width: 28px;
-    min-width: 28px;
-    height: 24px;
+    width: 26px;
+    min-width: 26px;
+    height: 22px;
     padding: 0;
     border: 1px solid var(--primary-low);
     border-radius: 7px;
     background: var(--secondary);
     color: var(--primary-medium);
-    font-size: 0.76em;
+    font-size: 0.72em;
     font-weight: 600;
     line-height: 1;
     box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.04);
   }
 
   .topic-item-metadata.right > .pull-right .badge-posts .number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     width: 100%;
     height: 100%;
     color: inherit;
     font-size: inherit;
     font-weight: inherit;
     line-height: 1;
-  }
-
-  .topic-item-metadata.right > .pull-right .badge-posts {
-    color: var(--primary-medium);
   }
 
   .topic-item-metadata.right > .pull-right .gf-mobile-views-badge {
@@ -332,11 +329,10 @@ div.cooked {
   }
 
   td img:not(.thumbnail) {
-    max-width: unset; // max-width distorts table images
+    max-width: unset;
   }
 }
 
-// chat
 .has-full-page-chat {
   #main {
     padding: 0;
@@ -352,5 +348,5 @@ div.cooked {
 }
 
 .chat-scroll-to-bottom__arrow {
-  width: 33px; // minor centering adjustment on iOS
+  width: 33px;
 }
