@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.8 */
+/* Graceful Theme Doc Mod v11.0.9 */
 @import "common/foundation/variables";
 
 body {
@@ -116,6 +116,21 @@ img.avatar {
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
     min-height: var(--gf-topic-avatar-size, 40px);
     padding-right: 30px;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats {
+    column-gap: 4px;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .activity {
+    margin-left: 0;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .activity::before {
+    content: "•";
+    display: inline-block;
+    margin: 0 4px 0 0;
+    color: var(--primary-low-mid);
   }
 
   .topic-item-metadata.right > .pull-right {
