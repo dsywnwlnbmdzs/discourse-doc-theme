@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.15 */
+/* Graceful Theme Doc Mod v11.0.16 */
 @import "common/foundation/variables";
 
 body {
@@ -16,7 +16,7 @@ body {
 
 #main-outlet {
   margin: 1em auto;
-  padding: 10px;
+  padding: 8px 10px 10px;
   width: 96%;
 }
 
@@ -61,7 +61,7 @@ img.avatar {
 }
 
 .list-controls {
-  margin: auto;
+  margin: auto auto 4px;
 
   .nav-pills > li {
     background: transparent;
@@ -87,7 +87,7 @@ img.avatar {
 
 .topic-list {
   border-collapse: separate;
-  border-spacing: 0 8px;
+  border-spacing: 0 5px;
 
   .badge-notification,
   .category-topic-link td.num .badge-notification {
@@ -104,11 +104,15 @@ img.avatar {
     font-weight: normal;
   }
 
+  tbody.topic-list-body {
+    padding-top: 0 !important;
+  }
+
   tbody.topic-list-body > tr.topic-list-item {
-    border: 1px solid rgb(var(--primary-rgb), 0.16);
-    border-radius: 12px;
+    border: 1px solid rgb(var(--primary-rgb), 0.28);
+    border-radius: 11px;
     background: var(--secondary);
-    box-shadow: 0 1px 3px rgb(var(--primary-rgb), 0.08);
+    box-shadow: 0 2px 5px rgb(var(--primary-rgb), 0.12);
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
@@ -130,7 +134,39 @@ img.avatar {
   }
 
   .topic-item-metadata.right > .topic-item-stats {
-    column-gap: 4px;
+    column-gap: 3px;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .topic-item-stats__category-tags {
+    margin-right: 2px;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+    margin-left: 0;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.82em;
+    height: 0.82em;
+    margin-right: 0;
+    color: var(--primary-low-mid);
+    line-height: 1;
+    transform: translateY(-0.02em);
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-action-icon .d-icon,
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-action-icon svg {
+    width: 0.82em;
+    height: 0.82em;
+    color: currentColor;
+    fill: currentColor;
   }
 
   .topic-item-metadata.right > .topic-item-stats .activity,
@@ -149,7 +185,7 @@ img.avatar {
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time::before {
     content: "•" !important;
     display: inline-block !important;
-    margin: 0 4px 0 0;
+    margin: 0 4px 0 1px;
     color: var(--primary-low-mid);
   }
 
@@ -182,14 +218,14 @@ img.avatar {
     min-width: 26px;
     height: 22px;
     padding: 0;
-    border: 1px solid rgb(var(--primary-rgb), 0.14);
+    border: 1px solid rgb(var(--primary-rgb), 0.2);
     border-radius: 7px;
     background: var(--secondary);
     color: var(--primary-medium);
     font-size: 0.72em;
     font-weight: 600;
     line-height: 1;
-    box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.06);
+    box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.08);
   }
 
   .topic-item-metadata.right > .pull-right .gf-mobile-views-badge {
