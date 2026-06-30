@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.24 */
+/* Graceful Theme Doc Mod v11.0.25 */
 @use "sass:color";
 
 // Big thanks to jsthon for the initial work on this https://meta.discourse.org/u/jsthon/
@@ -215,6 +215,11 @@ pre {
     margin-top: 4px;
     padding-left: 0;
   }
+}
+
+.mobile-view .topic-list .topic-item-metadata.right > .pull-right {
+  top: 0 !important;
+  transform: none !important;
 }
 
 .btn-default {
