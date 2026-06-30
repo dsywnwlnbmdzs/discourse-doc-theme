@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.24 */
+/* Graceful Theme Doc Mod v11.0.26 */
 @import "common/foundation/variables";
 
 body {
@@ -80,21 +80,42 @@ img.avatar {
 .mobile-view .navigation-container {
   .combo-box .combo-box-header,
   .mobile-nav,
-  .select-kit-header {
+  .select-kit-header,
+  .nav-pills > li > a {
     box-sizing: border-box;
     min-height: 42px;
     height: 42px;
     padding: 0 12px;
-    border: 1px solid var(--primary-low);
     border-radius: 4px;
     font-size: 1em;
     font-weight: 700;
+    line-height: 42px;
+  }
+
+  .combo-box .combo-box-header,
+  .mobile-nav,
+  .select-kit-header {
+    border: 1px solid var(--primary-low);
     line-height: 1.2;
+  }
+
+  .nav-pills > li {
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    height: 42px;
+  }
+
+  .nav-pills > li > a {
+    display: flex;
+    align-items: center;
+    color: var(--primary);
   }
 
   .mobile-nav .d-icon,
   .select-kit-header .d-icon,
-  .combo-box-header .d-icon {
+  .combo-box-header .d-icon,
+  .nav-pills > li > a .d-icon {
     font-size: 1em;
   }
 }
@@ -171,14 +192,36 @@ img.avatar {
   .topic-item-metadata.right {
     position: relative;
     display: block;
+    width: auto;
+    min-width: 0;
+    max-width: none;
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + 8px);
     min-height: var(--gf-topic-avatar-size, 40px);
-    padding-right: 30px;
+    padding-right: 28px;
+  }
+
+  .topic-item-metadata.right > .main-link,
+  .topic-item-metadata.right > .topic-list-main-link {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding-right: 0 !important;
+  }
+
+  .topic-item-metadata.right > .main-link .link-top-line,
+  .topic-item-metadata.right > .topic-list-main-link .link-top-line {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .topic-item-metadata.right > .main-link .title,
   .topic-item-metadata.right > .topic-list-main-link .title,
   .topic-item-metadata.right > .topic-list-main-link a.title {
+    display: inline;
+    max-width: none;
     font-size: var(--gf-topic-title-font-size);
     font-weight: 700;
     line-height: var(--gf-topic-title-line-height);
