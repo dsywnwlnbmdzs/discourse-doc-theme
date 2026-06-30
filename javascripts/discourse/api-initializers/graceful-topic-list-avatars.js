@@ -213,7 +213,6 @@ export default apiInitializer("1.34.0", (api) => {
     latest.className = hasReplies
       ? "gf-last-post-summary"
       : "gf-last-post-summary gf-no-reply-summary";
-    latest.style.display = hasReplies ? "block" : "flex";
 
     if (!hasReplies) {
       const noReply = document.createElement("div");
@@ -229,9 +228,6 @@ export default apiInitializer("1.34.0", (api) => {
 
     const head = document.createElement("div");
     head.className = "gf-last-reply-head";
-    head.style.display = "flex";
-    head.style.alignItems = "center";
-    head.style.gap = "8px";
     head.append(avatarWrap);
 
     const activityLink = row.querySelector("td.activity .post-activity")?.cloneNode(true);
@@ -243,8 +239,6 @@ export default apiInitializer("1.34.0", (api) => {
 
     const excerpt = document.createElement("div");
     excerpt.className = "gf-last-reply-excerpt";
-    excerpt.style.marginTop = "4px";
-    excerpt.style.paddingLeft = "0";
 
     latest.append(head, excerpt);
 
@@ -320,8 +314,6 @@ export default apiInitializer("1.34.0", (api) => {
     );
 
     mainLink.colSpan = 5;
-    mainLink.style.paddingTop = "6px";
-    mainLink.style.paddingBottom = "6px";
     mainLink.append(rowLayout);
     row.classList.add("gf-topic-list-v2-row");
   }
@@ -346,6 +338,16 @@ export default apiInitializer("1.34.0", (api) => {
     }
   }
 
+  function ensureMobileRepliesBadge(pullRight) {
+    let repliesBadge = pullRight.querySelector(".gf-mobile-replies-badge");
+    if (!repliesBadge) {
+      repliesBadge = document.createElement("span");
+      repliesBadge.className = "gf-mobile-replies-badge";
+      pullRight.prepend(repliesBadge);
+    }
+    return repliesBadge;
+  }
+
   function ensureMobileViewsBadge(pullRight) {
     let viewsBadge = pullRight.querySelector(".gf-mobile-views-badge");
     if (!viewsBadge) {
@@ -356,22 +358,22 @@ export default apiInitializer("1.34.0", (api) => {
     return viewsBadge;
   }
 
-  function updateMobileViewsBadge(viewsBadge, views) {
-    const value = String(views ?? "");
+  function updateBadge(badge, value, title) {
+    const text = String(value ?? "");
 
-    if (viewsBadge.dataset.gfViewsValue === value) {
+    if (badge.dataset.gfBadgeValue === text) {
       return;
     }
 
-    viewsBadge.dataset.gfViewsValue = value;
-    setIfChanged(viewsBadge, "textContent", value);
-    setIfChanged(viewsBadge, "title", `浏览数：${value}`);
-    setAttributeIfChanged(viewsBadge, "aria-label", `浏览数：${value}`);
+    badge.dataset.gfBadgeValue = text;
+    setIfChanged(badge, "textContent", text);
+    setIfChanged(badge, "title", title);
+    setAttributeIfChanged(badge, "aria-label", title);
   }
 
   function decorateMobileStats() {
     if (!document.documentElement.classList.contains("mobile-view")) {
-      document.querySelectorAll(".gf-mobile-views-badge").forEach((node) => node.remove());
+      document.querySelectorAll(".gf-mobile-replies-badge, .gf-mobile-views-badge").forEach((node) => node.remove());
       return;
     }
 
@@ -381,14 +383,15 @@ export default apiInitializer("1.34.0", (api) => {
       .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
       .forEach((row) => {
         const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
-        const views = topics[topicId]?.views ?? "";
         const pullRight = row.querySelector(".pull-right");
 
         if (!pullRight) {
           return;
         }
 
-        updateMobileViewsBadge(ensureMobileViewsBadge(pullRight), views);
+        const replies = row.querySelector(".pull-right .badge-posts .number")?.textContent?.trim() || topics[topicId]?.replyCount || "0";
+        updateBadge(ensureMobileRepliesBadge(pullRight), replies, `回复数：${replies}`);
+        updateBadge(ensureMobileViewsBadge(pullRight), topics[topicId]?.views ?? "", `浏览数：${topics[topicId]?.views ?? ""}`);
       });
   }
 
