@@ -1,5 +1,6 @@
 {
   "name": "Graceful Theme",
+  "version": "11.0.1",
   "about_url": "https://meta.discourse.org/t/a-graceful-theme-for-discourse/93040",
   "license_url": "https://github.com/discourse/graceful/blob/main/LICENSE",
   "assets": {
