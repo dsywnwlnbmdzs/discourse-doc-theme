@@ -510,6 +510,7 @@ export default apiInitializer("1.34.0", (api) => {
   }
 
   let syncQueued = false;
+  let resizeTimer = null;
 
   function syncTopicRows() {
     syncQueued = false;
@@ -532,8 +533,22 @@ export default apiInitializer("1.34.0", (api) => {
     }
   }
 
+  function scheduleResizeSync() {
+    if (resizeTimer) {
+      clearTimeout(resizeTimer);
+    }
+
+    resizeTimer = setTimeout(() => {
+      resizeTimer = null;
+      scheduleSyncTopicRows();
+      scheduleSyncTopicRows(150);
+    }, 120);
+  }
+
   api.onPageChange(() => {
     scheduleSyncTopicRows();
     scheduleSyncTopicRows(250);
   });
+
+  window.addEventListener("resize", scheduleResizeSync, { passive: true });
 });
