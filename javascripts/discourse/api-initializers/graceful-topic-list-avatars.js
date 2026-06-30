@@ -2,7 +2,6 @@ import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.34.0", (api) => {
   const excerptCache = new Map();
-  let isSyncing = false;
 
   function topicLookup() {
     try {
@@ -483,18 +482,6 @@ export default apiInitializer("1.34.0", (api) => {
     setAttributeIfChanged(activity, "aria-label", hasReply ? "最后回复时间" : "发帖时间");
   }
 
-  function mobileRowSignature(topic, replies) {
-    return JSON.stringify({
-      replyCount: topic.replyCount ?? 0,
-      views: topic.views ?? "",
-      lastPosterUsername: topic.lastPosterUsername || "",
-      creatorUsername: topic.creatorUsername || "",
-      bumpedAt: topic.bumpedAt || "",
-      createdAt: topic.createdAt || "",
-      replies: replies || "0",
-    });
-  }
-
   function decorateMobileStats() {
     if (!document.documentElement.classList.contains("mobile-view")) {
       document.querySelectorAll(".gf-mobile-replies-badge, .gf-mobile-views-badge").forEach((node) => node.remove());
@@ -510,14 +497,7 @@ export default apiInitializer("1.34.0", (api) => {
         const topic = topics[topicId] || {};
         const pullRight = row.querySelector(".pull-right");
         const replies = row.querySelector(".pull-right .badge-posts .number")?.textContent?.trim() || topic.replyCount || "0";
-        const signature = mobileRowSignature(topic, replies);
-        const alreadyDecorated = row.querySelector(".gf-mobile-meta-status") && row.querySelector(".gf-mobile-replies-badge") && row.querySelector(".gf-mobile-views-badge");
 
-        if (row.dataset.gfMobileSignature === signature && alreadyDecorated) {
-          return;
-        }
-
-        row.dataset.gfMobileSignature = signature;
         decorateMobileMetadata(row, topic);
 
         if (!pullRight) {
@@ -533,17 +513,9 @@ export default apiInitializer("1.34.0", (api) => {
 
   function syncTopicRows() {
     syncQueued = false;
-    isSyncing = true;
-
-    try {
-      decorateDesktopRows();
-      decorateMobileStats();
-      applyEnglishRelativeDates();
-    } finally {
-      queueMicrotask(() => {
-        isSyncing = false;
-      });
-    }
+    decorateDesktopRows();
+    decorateMobileStats();
+    applyEnglishRelativeDates();
   }
 
   function scheduleSyncTopicRows(delay = 0) {
@@ -563,19 +535,5 @@ export default apiInitializer("1.34.0", (api) => {
   api.onPageChange(() => {
     scheduleSyncTopicRows();
     scheduleSyncTopicRows(250);
-  });
-
-  const observer = new MutationObserver(() => {
-    if (!isSyncing) {
-      scheduleSyncTopicRows();
-    }
-  });
-
-  api.onPageChange(() => {
-    const listArea = document.querySelector("#list-area");
-    if (listArea && !listArea.dataset.gracefulAvatarObserver) {
-      listArea.dataset.gracefulAvatarObserver = "true";
-      observer.observe(listArea, { childList: true, subtree: true });
-    }
   });
 });
