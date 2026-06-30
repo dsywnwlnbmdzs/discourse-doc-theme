@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.5 */
+/* Graceful Theme Doc Mod v11.0.12 */
 @use "sass:color";
 
 // Big thanks to jsthon for the initial work on this https://meta.discourse.org/u/jsthon/
@@ -39,9 +39,6 @@
 }
 
 #main {
-  // need to show this above the background container
-  // can't use z-index: -1 because of a bug with pinch zoom
-  // in Safari iOS
   z-index: 1;
 }
 
@@ -80,11 +77,9 @@ pre {
 
 :root {
   --d-hover: var(--tertiary-low);
-
-  // Topic list shared rhythm tokens. Desktop and mobile use different outer DOM,
-  // but the left avatar + title/meta block uses the same rhythm.
   --gf-topic-avatar-size: 40px;
   --gf-topic-avatar-gap: 10px;
+  --gf-topic-avatar-radius: 3px;
   --gf-topic-title-meta-gap: 6px;
   --gf-topic-title-line-height: 1.2;
   --gf-topic-meta-font-size: 0.86em;
@@ -94,7 +89,6 @@ pre {
   --gf-topic-row-padding-block: 8px;
   --gf-topic-row-padding-inline: 5px;
 
-  // .btn-default
   --d-button-default-text-color: var(--primary);
   --d-button-default-text-color--hover: var(--tertiary);
   --d-button-default-bg-color: var(--secondary);
@@ -102,7 +96,6 @@ pre {
   --d-button-default-icon-color: var(--primary-high);
   --d-button-default-icon-color--hover: var(--tertiary);
 
-  // .btn-primary
   --d-button-primary-text-color: var(--secondary);
   --d-button-primary-text-color--hover: var(--tertiary);
   --d-button-primary-bg-color: var(--tertiary);
@@ -111,8 +104,6 @@ pre {
   --d-button-primary-icon-color--hover: var(--tertiary);
 }
 
-// Shared topic-list left block. The desktop initializer creates this same class
-// structure and the mobile template already contains the equivalent class names.
 .topic-list {
   .gf-topic-list-v2-row > td.gf-topic-cell,
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
@@ -140,6 +131,7 @@ pre {
     max-width: var(--gf-topic-avatar-size);
     max-height: var(--gf-topic-avatar-size);
     margin-top: 0;
+    border-radius: var(--gf-topic-avatar-radius);
     object-fit: cover;
   }
 
@@ -192,8 +184,6 @@ pre {
     background-color: var(--category-badge-color) !important;
   }
 
-  // Desktop-only right side alignment lives here because it depends on the
-  // shared row rhythm and must not be overwritten by JS inline layout.
   .gf-desktop-stats {
     align-self: center;
     padding-top: 0 !important;
@@ -321,7 +311,6 @@ header.d-header {
   background-color: var(--danger-hover, $danger-hover);
 }
 
-// Main category nav
 .list-controls .combo-box .combo-box-header {
   background: transparent;
 
