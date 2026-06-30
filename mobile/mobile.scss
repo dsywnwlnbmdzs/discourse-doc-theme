@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.19 */
+/* Graceful Theme Doc Mod v11.0.21 */
 @import "common/foundation/variables";
 
 body {
@@ -15,9 +15,12 @@ body {
 }
 
 #main-outlet {
+  box-sizing: border-box;
   margin: 8px auto 1em;
-  padding: 10px 10px 10px;
+  padding: 10px;
   width: 96%;
+  max-width: calc(100vw - 20px);
+  overflow: hidden;
 }
 
 .mobile-view .navigation-container {
@@ -90,6 +93,9 @@ img.avatar {
 }
 
 .topic-list {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0 5px;
 
@@ -109,19 +115,30 @@ img.avatar {
   }
 
   tbody.topic-list-body {
+    display: table-row-group;
+    width: 100%;
+    max-width: 100%;
     padding-top: 0 !important;
   }
 
   tbody.topic-list-body > tr.topic-list-item {
-    border: 5px solid var(--primary-300);
-    border-radius: 16px;
-    background: var(--secondary);
-    box-shadow: 1px 0 20px var(--primary-300);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: transparent;
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
     padding-left: 8px !important;
     padding-right: 8px !important;
+    overflow: hidden;
+    border: 5px solid var(--primary-300);
+    border-radius: 18px;
+    background: var(--secondary);
+    box-shadow: 1px 0 20px var(--primary-300);
   }
 
   img.avatar {
@@ -140,6 +157,7 @@ img.avatar {
   .topic-item-metadata.right > .topic-item-stats {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     flex-wrap: nowrap;
     overflow: hidden;
     white-space: nowrap;
@@ -166,7 +184,7 @@ img.avatar {
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-status {
     display: inline-flex;
     align-items: center;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     gap: 2px;
     min-width: 0;
     margin-left: 0;
@@ -174,8 +192,7 @@ img.avatar {
     white-space: nowrap;
   }
 
-  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-author,
-  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-state {
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-user {
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -211,12 +228,15 @@ img.avatar {
 
   .topic-item-metadata.right > .topic-item-stats .activity::before,
   .topic-item-metadata.right > .topic-item-stats .age.activity::before,
-  .topic-item-metadata.right > .topic-item-stats .num.activity::before {
+  .topic-item-metadata.right > .topic-item-stats .num.activity::before,
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time::before {
     content: none !important;
     display: none !important;
   }
 
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time {
+    display: inline-flex;
+    align-items: center;
     flex: 0 0 auto;
     min-width: max-content;
     max-width: none;
@@ -224,11 +244,23 @@ img.avatar {
     white-space: nowrap;
   }
 
-  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time::before {
-    content: "•" !important;
-    display: inline-block !important;
-    margin: 0 4px 0 1px;
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-time-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.78em;
+    height: 0.78em;
+    margin: 0 3px 0 1px;
     color: var(--primary-low-mid);
+    line-height: 1;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-time-icon .d-icon,
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-time-icon svg {
+    width: 0.78em;
+    height: 0.78em;
+    color: currentColor;
+    fill: currentColor;
   }
 
   .topic-item-metadata.right > .pull-right {
