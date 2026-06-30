@@ -31,6 +31,44 @@ export default apiInitializer("1.34.0", (api) => {
     }
   }
 
+  function englishRelativeTime(input) {
+    const timestamp = Number(input);
+    const date = Number.isFinite(timestamp) ? new Date(timestamp) : new Date(input);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    const seconds = Math.max(1, Math.floor((Date.now() - date.getTime()) / 1000));
+    const units = [
+      ["year", 31536000],
+      ["month", 2592000],
+      ["day", 86400],
+      ["hour", 3600],
+      ["minute", 60],
+      ["second", 1],
+    ];
+
+    for (const [unit, value] of units) {
+      const amount = Math.floor(seconds / value);
+      if (amount >= 1) {
+        return `${amount} ${unit}${amount === 1 ? "" : "s"} ago`;
+      }
+    }
+
+    return "1 second ago";
+  }
+
+  function applyEnglishRelativeDates(root = document) {
+    root.querySelectorAll(".relative-date[data-time]").forEach((node) => {
+      const value = englishRelativeTime(node.dataset.time);
+      if (value && node.textContent !== value) {
+        node.textContent = value;
+        node.dataset.gfEnglishTimeApplied = "true";
+      }
+    });
+  }
+
   function avatarLinks(posters) {
     return Array.from(posters.querySelectorAll("a")).filter((link) =>
       link.querySelector("img.avatar")
@@ -188,23 +226,21 @@ export default apiInitializer("1.34.0", (api) => {
     avatarWrap.className = "gf-last-avatar-inline";
     avatarWrap.append(latestAvatar);
 
-    const copy = document.createElement("div");
-    copy.className = "gf-last-reply-copy";
-
     const head = document.createElement("div");
     head.className = "gf-last-reply-head";
+    head.append(avatarWrap);
 
     const activityLink = row.querySelector("td.activity .post-activity")?.cloneNode(true);
     if (activityLink) {
       activityLink.classList.add("gf-last-date");
+      applyEnglishRelativeDates(activityLink);
       head.append(activityLink);
     }
 
     const excerpt = document.createElement("div");
     excerpt.className = "gf-last-reply-excerpt";
 
-    copy.append(head, excerpt);
-    latest.append(avatarWrap, copy);
+    latest.append(head, excerpt);
 
     if (activityLink) {
       requestAnimationFrame(() => loadLastReplyExcerpt(row, excerpt, activityLink));
@@ -354,6 +390,7 @@ export default apiInitializer("1.34.0", (api) => {
     syncQueued = false;
     decorateDesktopRows();
     decorateMobileStats();
+    applyEnglishRelativeDates();
   }
 
   function scheduleSyncTopicRows(delay = 0) {
