@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.4 */
+/* Graceful Theme Doc Mod v11.0.5 */
 @use "sass:color";
 
 // Big thanks to jsthon for the initial work on this https://meta.discourse.org/u/jsthon/
@@ -91,7 +91,7 @@ pre {
   --gf-topic-meta-line-height: 1.2;
   --gf-topic-meta-row-gap: 4px;
   --gf-topic-meta-column-gap: 8px;
-  --gf-topic-row-padding-block: 6px;
+  --gf-topic-row-padding-block: 8px;
   --gf-topic-row-padding-inline: 5px;
 
   // .btn-default
@@ -117,7 +117,7 @@ pre {
   .gf-topic-list-v2-row > td.gf-topic-cell,
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
     box-sizing: border-box;
-    padding: var(--gf-topic-row-padding-block) var(--gf-topic-row-padding-inline);
+    padding: var(--gf-topic-row-padding-block) var(--gf-topic-row-padding-inline) !important;
   }
 
   .gf-topic-left,
@@ -190,6 +190,35 @@ pre {
   .topic-item-metadata.right > .topic-item-stats .badge-category.--style-square::before,
   .topic-item-metadata.right > .topic-item-stats .badge-category.--style-bar::before {
     background-color: var(--category-badge-color) !important;
+  }
+
+  // Desktop-only right side alignment lives here because it depends on the
+  // shared row rhythm and must not be overwritten by JS inline layout.
+  .gf-desktop-stats {
+    align-self: center;
+    padding-top: 0 !important;
+    transform: translateY(1px);
+  }
+
+  .gf-last-post-summary {
+    display: block !important;
+  }
+
+  .gf-last-post-summary.gf-no-reply-summary {
+    display: flex !important;
+    align-items: center;
+  }
+
+  .gf-last-reply-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .gf-last-reply-excerpt {
+    margin-top: 4px;
+    padding-left: 0;
   }
 }
 
