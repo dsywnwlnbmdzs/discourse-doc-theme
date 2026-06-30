@@ -136,7 +136,7 @@ img.avatar {
     padding-right: 8px !important;
     overflow: hidden;
     border: 1px solid rgb(var(--primary-rgb), 0.12);
-    border-radius: 12px;
+    border-radius: var(--gf-topic-avatar-radius);
     background: var(--secondary);
     box-shadow: 0 2px 9px rgba(0, 0, 0, 0.12);
   }
