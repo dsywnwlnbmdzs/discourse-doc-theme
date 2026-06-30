@@ -371,6 +371,67 @@ export default apiInitializer("1.34.0", (api) => {
     setAttributeIfChanged(badge, "aria-label", title);
   }
 
+  function buildMobileMetaStatus(topic) {
+    const hasReply = Number(topic?.replyCount || 0) > 0;
+    const username = hasReply
+      ? topic?.lastPosterUsername || topic?.creatorUsername || ""
+      : topic?.creatorUsername || topic?.lastPosterUsername || "";
+    const statusText = hasReply ? "Replied" : "Started";
+    const iconText = hasReply ? "↩" : "✎";
+
+    const status = document.createElement("span");
+    status.className = `gf-mobile-meta-status ${hasReply ? "gf-mobile-meta-replied" : "gf-mobile-meta-started"}`;
+
+    const icon = document.createElement("span");
+    icon.className = "gf-mobile-meta-status-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = iconText;
+
+    const author = document.createElement("span");
+    author.className = "gf-mobile-meta-author";
+    author.textContent = username;
+
+    const state = document.createElement("span");
+    state.className = "gf-mobile-meta-state";
+    state.textContent = statusText;
+
+    status.append(icon, author, state);
+    return status;
+  }
+
+  function decorateMobileMetadata(row, topic) {
+    const stats = row.querySelector(".topic-item-metadata.right > .topic-item-stats");
+    if (!stats || !topic) {
+      return;
+    }
+
+    let activity = stats.querySelector(":scope > .activity");
+    const category = stats.querySelector(":scope > .topic-item-stats__category-tags");
+
+    stats.querySelectorAll(":scope > .gf-mobile-meta-status").forEach((node) => node.remove());
+    Array.from(stats.children).forEach((child) => {
+      if (child !== category && child !== activity && !child.classList.contains("gf-mobile-meta-status")) {
+        child.remove();
+      }
+    });
+
+    const status = buildMobileMetaStatus(topic);
+
+    if (!activity) {
+      activity = document.createElement("span");
+      activity.className = "activity gf-mobile-meta-time";
+      stats.append(activity);
+    } else {
+      activity.classList.add("gf-mobile-meta-time");
+    }
+
+    const timeSource = Number(topic.replyCount || 0) > 0 ? topic.bumpedAt : topic.createdAt;
+    activity.textContent = englishRelativeTime(timeSource);
+    activity.setAttribute("aria-label", Number(topic.replyCount || 0) > 0 ? "最后回复时间" : "发帖时间");
+
+    stats.insertBefore(status, activity);
+  }
+
   function decorateMobileStats() {
     if (!document.documentElement.classList.contains("mobile-view")) {
       document.querySelectorAll(".gf-mobile-replies-badge, .gf-mobile-views-badge").forEach((node) => node.remove());
@@ -383,15 +444,18 @@ export default apiInitializer("1.34.0", (api) => {
       .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
       .forEach((row) => {
         const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
+        const topic = topics[topicId] || {};
         const pullRight = row.querySelector(".pull-right");
+
+        decorateMobileMetadata(row, topic);
 
         if (!pullRight) {
           return;
         }
 
-        const replies = row.querySelector(".pull-right .badge-posts .number")?.textContent?.trim() || topics[topicId]?.replyCount || "0";
+        const replies = row.querySelector(".pull-right .badge-posts .number")?.textContent?.trim() || topic.replyCount || "0";
         updateBadge(ensureMobileRepliesBadge(pullRight), replies, `回复数：${replies}`);
-        updateBadge(ensureMobileViewsBadge(pullRight), topics[topicId]?.views ?? "", `浏览数：${topics[topicId]?.views ?? ""}`);
+        updateBadge(ensureMobileViewsBadge(pullRight), topic.views ?? "", `浏览数：${topic.views ?? ""}`);
       });
   }
 
