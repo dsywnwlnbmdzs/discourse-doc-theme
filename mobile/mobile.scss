@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.22 */
+/* Graceful Theme Doc Mod v11.0.24 */
 @import "common/foundation/variables";
 
 body {
@@ -77,6 +77,28 @@ img.avatar {
   }
 }
 
+.mobile-view .navigation-container {
+  .combo-box .combo-box-header,
+  .mobile-nav,
+  .select-kit-header {
+    box-sizing: border-box;
+    min-height: 42px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--primary-low);
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .mobile-nav .d-icon,
+  .select-kit-header .d-icon,
+  .combo-box-header .d-icon {
+    font-size: 1em;
+  }
+}
+
 .modal-inner-container {
   width: 95%;
   border-radius: 4px;
@@ -151,7 +173,17 @@ img.avatar {
     display: block;
     margin-left: calc(var(--gf-topic-avatar-size, 40px) + 8px);
     min-height: var(--gf-topic-avatar-size, 40px);
-    padding-right: 20px;
+    padding-right: 30px;
+  }
+
+  .topic-item-metadata.right > .main-link .title,
+  .topic-item-metadata.right > .topic-list-main-link .title,
+  .topic-item-metadata.right > .topic-list-main-link a.title {
+    font-size: var(--gf-topic-title-font-size);
+    font-weight: 700;
+    line-height: var(--gf-topic-title-line-height);
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .topic-item-metadata.right > .topic-item-stats {
@@ -339,7 +371,7 @@ img.avatar {
 }
 
 .select-kit.dropdown-select-box.period-chooser .period-chooser-header {
-  font-size: 0.745em;
+  font-size: 1em;
 }
 
 .list-controls .combo-box .combo-box-header {
@@ -362,7 +394,7 @@ img.avatar {
 }
 
 .mobile-view .mobile-nav {
-  width: 100%;
+  width: auto;
   background: transparent;
   border: 1px solid var(--primary-low);
   border-radius: 4px;
