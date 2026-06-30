@@ -371,31 +371,42 @@ export default apiInitializer("1.34.0", (api) => {
     setAttributeIfChanged(badge, "aria-label", title);
   }
 
-  function buildMobileMetaStatus(topic) {
-    const hasReply = Number(topic?.replyCount || 0) > 0;
-    const username = hasReply
-      ? topic?.lastPosterUsername || topic?.creatorUsername || ""
-      : topic?.creatorUsername || topic?.lastPosterUsername || "";
-    const statusText = hasReply ? "Replied" : "Started";
-    const iconText = hasReply ? "↩" : "✎";
+  function hasUserReply(topic) {
+    if (!topic) {
+      return false;
+    }
 
-    const status = document.createElement("span");
-    status.className = `gf-mobile-meta-status ${hasReply ? "gf-mobile-meta-replied" : "gf-mobile-meta-started"}`;
+    const creator = (topic.creatorUsername || "").toLowerCase();
+    const latest = (topic.lastPosterUsername || "").toLowerCase();
 
-    const icon = document.createElement("span");
-    icon.className = "gf-mobile-meta-status-icon";
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = iconText;
+    if (latest && creator && latest !== creator) {
+      return true;
+    }
 
-    const author = document.createElement("span");
-    author.className = "gf-mobile-meta-author";
-    author.textContent = username;
+    return Number(topic.replyCount || 0) > 0;
+  }
 
-    const state = document.createElement("span");
-    state.className = "gf-mobile-meta-state";
-    state.textContent = statusText;
+  function mobileMetaIconHtml(hasReply) {
+    const icon = hasReply ? "reply" : "far-pen-to-square";
+    return `<svg class="fa d-icon d-icon-${icon} svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#${icon}"></use></svg>`;
+  }
 
-    status.append(icon, author, state);
+  function ensureMobileMetaStatus(stats, activity) {
+    let status = stats.querySelector(":scope > .gf-mobile-meta-status");
+
+    if (!status) {
+      status = document.createElement("span");
+      status.className = "gf-mobile-meta-status";
+      status.innerHTML = `
+        <span class="gf-mobile-action-icon" aria-hidden="true"></span>
+        <span class="gf-mobile-meta-author"></span>
+        <span class="gf-mobile-meta-state"></span>
+      `;
+      stats.insertBefore(status, activity || null);
+    } else if (activity && status.nextElementSibling !== activity) {
+      stats.insertBefore(status, activity);
+    }
+
     return status;
   }
 
@@ -405,31 +416,52 @@ export default apiInitializer("1.34.0", (api) => {
       return;
     }
 
-    let activity = stats.querySelector(":scope > .activity");
     const category = stats.querySelector(":scope > .topic-item-stats__category-tags");
-
-    stats.querySelectorAll(":scope > .gf-mobile-meta-status").forEach((node) => node.remove());
-    Array.from(stats.children).forEach((child) => {
-      if (child !== category && child !== activity && !child.classList.contains("gf-mobile-meta-status")) {
-        child.remove();
-      }
-    });
-
-    const status = buildMobileMetaStatus(topic);
+    let activity = stats.querySelector(":scope > .activity");
 
     if (!activity) {
       activity = document.createElement("span");
       activity.className = "activity gf-mobile-meta-time";
       stats.append(activity);
-    } else {
-      activity.classList.add("gf-mobile-meta-time");
     }
 
-    const timeSource = Number(topic.replyCount || 0) > 0 ? topic.bumpedAt : topic.createdAt;
-    activity.textContent = englishRelativeTime(timeSource);
-    activity.setAttribute("aria-label", Number(topic.replyCount || 0) > 0 ? "最后回复时间" : "发帖时间");
+    activity.classList.add("gf-mobile-meta-time");
 
-    stats.insertBefore(status, activity);
+    if (category && stats.firstElementChild !== category) {
+      stats.insertBefore(category, stats.firstElementChild);
+    }
+
+    const hasReply = hasUserReply(topic);
+    const username = hasReply
+      ? topic.lastPosterUsername || topic.creatorUsername || ""
+      : topic.creatorUsername || topic.lastPosterUsername || "";
+    const stateText = hasReply ? "Replied" : "Started";
+    const timeSource = hasReply ? topic.bumpedAt : topic.createdAt;
+    const timeText = englishRelativeTime(timeSource);
+
+    const status = ensureMobileMetaStatus(stats, activity);
+    const icon = status.querySelector(".gf-mobile-action-icon");
+    const author = status.querySelector(".gf-mobile-meta-author");
+    const state = status.querySelector(".gf-mobile-meta-state");
+
+    status.classList.toggle("gf-mobile-meta-replied", hasReply);
+    status.classList.toggle("gf-mobile-meta-started", !hasReply);
+
+    if (status.dataset.gfMetaState !== stateText) {
+      status.dataset.gfMetaState = stateText;
+      icon.innerHTML = mobileMetaIconHtml(hasReply);
+      state.textContent = stateText;
+    }
+
+    if (author.textContent !== username) {
+      author.textContent = username;
+    }
+
+    if (activity.textContent !== timeText) {
+      activity.textContent = timeText;
+    }
+
+    setAttributeIfChanged(activity, "aria-label", hasReply ? "最后回复时间" : "发帖时间");
   }
 
   function decorateMobileStats() {
