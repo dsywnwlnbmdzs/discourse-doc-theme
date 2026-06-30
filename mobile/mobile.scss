@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.10 */
+/* Graceful Theme Doc Mod v11.0.11 */
 @import "common/foundation/variables";
 
 body {
@@ -45,7 +45,7 @@ body {
 }
 
 img.avatar {
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .image-upload-controls {
@@ -86,6 +86,9 @@ img.avatar {
 }
 
 .topic-list {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+
   .badge-notification,
   .category-topic-link td.num .badge-notification {
     padding: 2px 6px;
@@ -101,14 +104,27 @@ img.avatar {
     font-weight: normal;
   }
 
+  tbody.topic-list-body > tr.topic-list-item {
+    border: 1px solid var(--primary-low);
+    border-radius: 12px;
+    background: var(--secondary);
+    box-shadow: 0 1px 4px rgb(var(--primary-rgb), 0.06);
+  }
+
+  tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
   img.avatar {
     margin-top: 0;
+    border-radius: 3px;
   }
 
   .topic-item-metadata.right {
     position: relative;
     display: block;
-    margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
+    margin-left: calc(var(--gf-topic-avatar-size, 40px) + 8px);
     min-height: var(--gf-topic-avatar-size, 40px);
     padding-right: 30px;
   }
@@ -117,13 +133,22 @@ img.avatar {
     column-gap: 4px;
   }
 
-  .topic-item-metadata.right > .topic-item-stats .activity {
+  .topic-item-metadata.right > .topic-item-stats .activity,
+  .topic-item-metadata.right > .topic-item-stats .age.activity,
+  .topic-item-metadata.right > .topic-item-stats .num.activity {
     margin-left: 0;
   }
 
-  .topic-item-metadata.right > .topic-item-stats .activity::before {
-    content: "•";
-    display: inline-block;
+  .topic-item-metadata.right > .topic-item-stats .activity::before,
+  .topic-item-metadata.right > .topic-item-stats .age.activity::before,
+  .topic-item-metadata.right > .topic-item-stats .num.activity::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time::before {
+    content: "•" !important;
+    display: inline-block !important;
     margin: 0 4px 0 0;
     color: var(--primary-low-mid);
   }
@@ -172,7 +197,7 @@ img.avatar {
   }
 
   > tbody > tr:first-of-type {
-    border-top: 3px solid transparent;
+    border-top: 0;
   }
 }
 
