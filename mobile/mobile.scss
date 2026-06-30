@@ -113,10 +113,11 @@ img.avatar {
   }
 
   tbody.topic-list-body > tr.topic-list-item {
-    border: 1px solid rgb(var(--primary-rgb), 0.28);
+    border: 5px solid var(--primary-300);
     border-radius: 11px;
     background: var(--secondary);
-    box-shadow: 0 2px 5px rgb(var(--primary-rgb), 0.12);
+    box-shadow: 1px 0px 20px var(--primary-300);
+    
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
