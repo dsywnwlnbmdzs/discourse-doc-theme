@@ -372,35 +372,21 @@ export default apiInitializer("1.34.0", (api) => {
   }
 
   function hasUserReply(topic) {
-    if (!topic) {
-      return false;
-    }
-
-    const creator = (topic.creatorUsername || "").toLowerCase();
-    const latest = (topic.lastPosterUsername || "").toLowerCase();
-
-    if (latest && creator && latest !== creator) {
-      return true;
-    }
-
-    return Number(topic.replyCount || 0) > 0;
+    return Number(topic?.replyCount || 0) > 0;
   }
 
-  function mobileMetaIconHtml(hasReply) {
-    const icon = hasReply ? "reply" : "far-pen-to-square";
-    return `<svg class="fa d-icon d-icon-${icon} svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#${icon}"></use></svg>`;
+  function mobileTimeIconHtml() {
+    return `<svg class="fa d-icon d-icon-clock svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#clock"></use></svg>`;
   }
 
-  function ensureMobileMetaStatus(stats, activity) {
+  function ensureMobileMetaUser(stats, activity) {
     let status = stats.querySelector(":scope > .gf-mobile-meta-status");
 
     if (!status) {
       status = document.createElement("span");
       status.className = "gf-mobile-meta-status";
       status.innerHTML = `
-        <span class="gf-mobile-action-icon" aria-hidden="true"></span>
-        <span class="gf-mobile-meta-author"></span>
-        <span class="gf-mobile-meta-state"></span>
+        <a class="gf-mobile-meta-user" href="#" tabindex="0"></a>
       `;
       stats.insertBefore(status, activity || null);
     } else if (activity && status.nextElementSibling !== activity) {
@@ -408,6 +394,22 @@ export default apiInitializer("1.34.0", (api) => {
     }
 
     return status;
+  }
+
+  function ensureMobileMetaTime(activity) {
+    let icon = activity.querySelector(":scope > .gf-mobile-time-icon");
+    let text = activity.querySelector(":scope > .gf-mobile-time-text");
+
+    if (!icon || !text) {
+      activity.innerHTML = `
+        <span class="gf-mobile-time-icon" aria-hidden="true">${mobileTimeIconHtml()}</span>
+        <span class="gf-mobile-time-text"></span>
+      `;
+      icon = activity.querySelector(":scope > .gf-mobile-time-icon");
+      text = activity.querySelector(":scope > .gf-mobile-time-text");
+    }
+
+    return { icon, text };
   }
 
   function decorateMobileMetadata(row, topic) {
@@ -435,30 +437,26 @@ export default apiInitializer("1.34.0", (api) => {
     const username = hasReply
       ? topic.lastPosterUsername || topic.creatorUsername || ""
       : topic.creatorUsername || topic.lastPosterUsername || "";
-    const stateText = hasReply ? "Replied" : "Started";
     const timeSource = hasReply ? topic.bumpedAt : topic.createdAt;
     const timeText = englishRelativeTime(timeSource);
 
-    const status = ensureMobileMetaStatus(stats, activity);
-    const icon = status.querySelector(".gf-mobile-action-icon");
-    const author = status.querySelector(".gf-mobile-meta-author");
-    const state = status.querySelector(".gf-mobile-meta-state");
+    const status = ensureMobileMetaUser(stats, activity);
+    const user = status.querySelector(".gf-mobile-meta-user");
 
     status.classList.toggle("gf-mobile-meta-replied", hasReply);
     status.classList.toggle("gf-mobile-meta-started", !hasReply);
 
-    if (status.dataset.gfMetaState !== stateText) {
-      status.dataset.gfMetaState = stateText;
-      icon.innerHTML = mobileMetaIconHtml(hasReply);
-      state.textContent = stateText;
+    if (username && user.dataset.gfUsername !== username) {
+      user.dataset.gfUsername = username;
+      user.textContent = username;
+      user.href = `/u/${encodeURIComponent(username)}`;
+      user.dataset.userCard = username;
+      user.setAttribute("aria-label", `${username} 的个人资料`);
     }
 
-    if (author.textContent !== username) {
-      author.textContent = username;
-    }
-
-    if (activity.textContent !== timeText) {
-      activity.textContent = timeText;
+    const { text } = ensureMobileMetaTime(activity);
+    if (text.textContent !== timeText) {
+      text.textContent = timeText;
     }
 
     setAttributeIfChanged(activity, "aria-label", hasReply ? "最后回复时间" : "发帖时间");
