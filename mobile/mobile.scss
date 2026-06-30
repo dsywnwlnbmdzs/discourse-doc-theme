@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.11 */
+/* Graceful Theme Doc Mod v11.0.15 */
 @import "common/foundation/variables";
 
 body {
@@ -45,7 +45,7 @@ body {
 }
 
 img.avatar {
-  border-radius: 3px;
+  border-radius: var(--gf-topic-avatar-radius, 3px);
 }
 
 .image-upload-controls {
@@ -105,10 +105,10 @@ img.avatar {
   }
 
   tbody.topic-list-body > tr.topic-list-item {
-    border: 1px solid var(--primary-low);
+    border: 1px solid rgb(var(--primary-rgb), 0.16);
     border-radius: 12px;
     background: var(--secondary);
-    box-shadow: 0 1px 4px rgb(var(--primary-rgb), 0.06);
+    box-shadow: 0 1px 3px rgb(var(--primary-rgb), 0.08);
   }
 
   tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
@@ -118,7 +118,7 @@ img.avatar {
 
   img.avatar {
     margin-top: 0;
-    border-radius: 3px;
+    border-radius: var(--gf-topic-avatar-radius, 3px);
   }
 
   .topic-item-metadata.right {
@@ -182,14 +182,14 @@ img.avatar {
     min-width: 26px;
     height: 22px;
     padding: 0;
-    border: 1px solid var(--primary-low);
+    border: 1px solid rgb(var(--primary-rgb), 0.14);
     border-radius: 7px;
     background: var(--secondary);
     color: var(--primary-medium);
     font-size: 0.72em;
     font-weight: 600;
     line-height: 1;
-    box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.04);
+    box-shadow: 0 1px 2px rgb(var(--primary-rgb), 0.06);
   }
 
   .topic-item-metadata.right > .pull-right .gf-mobile-views-badge {
