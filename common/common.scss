@@ -1,3 +1,4 @@
+/* Graceful Theme Doc Mod v11.0.4 */
 @use "sass:color";
 
 // Big thanks to jsthon for the initial work on this https://meta.discourse.org/u/jsthon/
@@ -80,17 +81,17 @@ pre {
 :root {
   --d-hover: var(--tertiary-low);
 
-  // Topic list shared rhythm tokens. Desktop and mobile use different DOM,
-  // but the left avatar + title/meta block should feel identical.
+  // Topic list shared rhythm tokens. Desktop and mobile use different outer DOM,
+  // but the left avatar + title/meta block uses the same rhythm.
   --gf-topic-avatar-size: 40px;
   --gf-topic-avatar-gap: 10px;
-  --gf-topic-title-meta-gap: 7px;
+  --gf-topic-title-meta-gap: 6px;
   --gf-topic-title-line-height: 1.2;
   --gf-topic-meta-font-size: 0.86em;
   --gf-topic-meta-line-height: 1.2;
   --gf-topic-meta-row-gap: 4px;
   --gf-topic-meta-column-gap: 8px;
-  --gf-topic-row-padding-block: 20px;
+  --gf-topic-row-padding-block: 6px;
   --gf-topic-row-padding-inline: 5px;
 
   // .btn-default
@@ -108,6 +109,88 @@ pre {
   --d-button-primary-bg-color--hover: var(--tertiary-low);
   --d-button-primary-icon-color: var(--secondary);
   --d-button-primary-icon-color--hover: var(--tertiary);
+}
+
+// Shared topic-list left block. The desktop initializer creates this same class
+// structure and the mobile template already contains the equivalent class names.
+.topic-list {
+  .gf-topic-list-v2-row > td.gf-topic-cell,
+  tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
+    box-sizing: border-box;
+    padding: var(--gf-topic-row-padding-block) var(--gf-topic-row-padding-inline);
+  }
+
+  .gf-topic-left,
+  .topic-item-metadata.right {
+    min-width: 0;
+  }
+
+  .gf-topic-left .pull-left,
+  .topic-list-item .pull-left {
+    width: var(--gf-topic-avatar-size);
+    height: var(--gf-topic-avatar-size);
+    margin-right: var(--gf-topic-avatar-gap);
+    line-height: 0;
+  }
+
+  .gf-topic-left .pull-left img.avatar,
+  .topic-list-item .pull-left img.avatar {
+    width: var(--gf-topic-avatar-size);
+    height: var(--gf-topic-avatar-size);
+    max-width: var(--gf-topic-avatar-size);
+    max-height: var(--gf-topic-avatar-size);
+    margin-top: 0;
+    object-fit: cover;
+  }
+
+  .gf-topic-title,
+  .topic-item-metadata.right > .main-link,
+  .topic-item-metadata.right > .topic-list-main-link {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    line-height: var(--gf-topic-title-line-height);
+  }
+
+  .gf-topic-title .title,
+  .topic-item-metadata.right > .main-link .title,
+  .topic-item-metadata.right > .topic-list-main-link .title,
+  .topic-item-metadata.right > .topic-list-main-link a.title {
+    overflow-wrap: anywhere;
+  }
+
+  .gf-topic-meta,
+  .gf-topic-left .topic-item-stats,
+  .topic-item-metadata.right > .topic-item-stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--gf-topic-meta-row-gap) var(--gf-topic-meta-column-gap);
+    min-width: 0;
+    margin-top: var(--gf-topic-title-meta-gap);
+    padding: 0;
+    font-size: var(--gf-topic-meta-font-size);
+    line-height: var(--gf-topic-meta-line-height);
+    color: var(--primary-medium);
+  }
+
+  .gf-topic-meta .badge-category__wrapper,
+  .gf-topic-meta .badge-category,
+  .gf-topic-meta .badge-category__name,
+  .gf-topic-meta .badge-category .d-icon,
+  .topic-item-metadata.right > .topic-item-stats .badge-category__wrapper,
+  .topic-item-metadata.right > .topic-item-stats .badge-category,
+  .topic-item-metadata.right > .topic-item-stats .badge-category__name,
+  .topic-item-metadata.right > .topic-item-stats .badge-category .d-icon {
+    color: var(--category-badge-color) !important;
+  }
+
+  .gf-topic-meta .badge-category.--style-square::before,
+  .gf-topic-meta .badge-category.--style-bar::before,
+  .topic-item-metadata.right > .topic-item-stats .badge-category.--style-square::before,
+  .topic-item-metadata.right > .topic-item-stats .badge-category.--style-bar::before {
+    background-color: var(--category-badge-color) !important;
+  }
 }
 
 .btn-default {
@@ -238,234 +321,4 @@ header.d-header {
 
 #topic-title {
   padding-top: 0;
-}
-
-.topic-map .btn {
-  border-radius: 0;
-}
-
-.badge-card {
-  border-radius: 4px;
-}
-
-// Horizontal topic timeline
-#topic-progress-wrapper {
-  right: 10vw !important;
-}
-
-#topic-progress-wrapper .topic-admin-menu-button-container .toggle-admin-menu {
-  background: var(--secondary);
-  border-radius: 4px 0 0 4px;
-}
-
-#bulk-select {
-  background: transparent;
-
-  button {
-    background: var(--secondary);
-
-    @include box-shadow(2px);
-
-    &:hover {
-      background: var(--tertiary-low);
-    }
-  }
-}
-
-// User pages
-.user-preferences .bio-composer .d-editor-preview,
-.group-form-bio .d-editor-preview,
-.edit-category-tab-topic-template .d-editor-preview {
-  background: var(--tertiary-low);
-}
-
-.badge-group {
-  background: var(--tertiary-low);
-}
-
-.input-prepend.input-append input,
-.input-prepend.input-append select {
-  background: var(--tertiary-low);
-}
-
-.modal .modal-body {
-  label .d-icon {
-    color: var(--tertiary);
-  }
-}
-
-.user-main {
-  .staff-counters {
-    background: var(--tertiary-low);
-    color: var(--tertiary);
-
-    a {
-      color: var(--tertiary);
-    }
-
-    span {
-      color: var(--secondary);
-    }
-  }
-
-  .helpful-flags {
-    background-color: #2ecc40;
-  }
-
-  .flagged-posts {
-    background-color: #f012be;
-  }
-
-  .deleted-posts {
-    background-color: #ff851b;
-  }
-
-  .warnings-received {
-    background-color: #ff4136;
-  }
-}
-
-// admin
-.post-admin-menu {
-  .popup-menu-button {
-    border: none;
-  }
-}
-
-.admin-controls {
-  background: var(--tertiary-low);
-
-  .controls {
-    background: var(--tertiary-low);
-  }
-
-  nav {
-    background: var(--tertiary-low);
-
-    &::before {
-      background: linear-gradient(
-        to right,
-        var(--tertiary-low) 0%,
-        rgb(234, 236, 238, 0) 100%
-      );
-    }
-
-    &::after {
-      background: linear-gradient(
-        to right,
-        rgb(234, 236, 238, 0) 0%,
-        var(--tertiary-low) 100%
-      );
-    }
-  }
-}
-
-.boxed.white {
-  background-color: transparent !important;
-}
-
-.nav-stacked {
-  background: var(--tertiary-low);
-
-  li {
-    border-color: var(--tertiary-medium);
-  }
-}
-
-.admin-detail {
-  border-color: var(--tertiary-medium);
-}
-
-.content-list ul li a:hover {
-  background: var(--tertiary-low);
-}
-
-span.user-title {
-  border: 1px solid #f1be18;
-  color: #f1be18 !important;
-  padding: 0 4px;
-  line-height: 1.2em;
-  font-size: 0.85em;
-  letter-spacing: 0.5px;
-  border-radius: 8px;
-}
-
-.uploaded-image-preview {
-  background: var(--tertiary-low);
-  border-radius: 4px;
-}
-
-// Select kit
-.select-kit.dropdown-select-box .dropdown-select-box-header {
-  &:hover {
-    .d-icon {
-      color: var(--tertiary);
-    }
-  }
-}
-
-.select-kit.dropdown-select-box.composer-actions .select-kit-header .d-icon {
-  border: none;
-}
-
-.select-kit.dropdown-select-box.toolbar-popup-menu-options .select-kit-row {
-  &:hover,
-  &.is-highlighted {
-    background: var(--tertiary-low);
-  }
-}
-
-.user-main .staff-counters > div,
-.user-main .staff-counters > div a {
-  color: var(--primary);
-}
-
-@media screen and (width <= 790px) {
-  .topic-area > .loading-container {
-    max-width: calc(100vw - 50px);
-  }
-}
-
-// new user menu
-.user-menu.revamped .menu-tabs-container {
-  border: none;
-
-  button {
-    margin: 0 0.5em 0.5em 0;
-  }
-
-  .bottom-tabs.tabs-list {
-    border-top: none;
-  }
-}
-
-// No-js view
-.crawler > #main-outlet,
-noscript > #main-outlet {
-  padding-top: 6em;
-}
-
-// chat
-.chat-composer__wrapper {
-  background: transparent;
-}
-
-body.has-full-page-chat {
-  #main-outlet {
-    padding: 0;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-}
-
-.full-page-chat .c-navbar-container {
-  top: unset;
-}
-
-.chat-channel {
-  height: calc(100vh - (var(--header-offset) + 6.75em));
-}
-
-.powered-by-discourse {
-  margin-top: 1em;
 }
