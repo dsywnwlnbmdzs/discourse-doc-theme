@@ -40,8 +40,13 @@ const gfLongDate = helper(function ([date]) {
   if (!date) {
     return "";
   }
+
   return longDate(new Date(date)) || "";
 });
+
+function gfIsMobileView() {
+  return document.documentElement.classList.contains("mobile-view");
+}
 
 function gfTopicLookup() {
   try {
@@ -136,12 +141,6 @@ function patchGracefulEnglishDates() {
       node.dataset.gfEnglishTimeApplied = "true";
     }
   });
-}
-
-function scheduleGracefulEnglishDates() {
-  requestAnimationFrame(patchGracefulEnglishDates);
-  setTimeout(patchGracefulEnglishDates, 120);
-  setTimeout(patchGracefulEnglishDates, 500);
 }
 
 function mobileActionIconHtml(hasReply) {
@@ -285,7 +284,7 @@ function decorateMobileMetadata(row, topic) {
 }
 
 function patchMobileNativeTopicCards() {
-  if (!document.documentElement.classList.contains("mobile-view")) {
+  if (!gfIsMobileView()) {
     cleanupMobileNativeTopicCards();
     return;
   }
@@ -318,21 +317,6 @@ function cleanupMobileNativeTopicCards() {
   document
     .querySelectorAll(".gf-mobile-replies-badge, .gf-mobile-views-badge")
     .forEach((node) => node.remove());
-}
-
-function syncMobileNativeTopicCards() {
-  if (document.documentElement.classList.contains("mobile-view")) {
-    patchMobileNativeTopicCards();
-  } else {
-    cleanupMobileNativeTopicCards();
-  }
-}
-
-function scheduleMobileNativeTopicCardsSync() {
-  requestAnimationFrame(syncMobileNativeTopicCards);
-  setTimeout(syncMobileNativeTopicCards, 80);
-  setTimeout(syncMobileNativeTopicCards, 250);
-  setTimeout(syncMobileNativeTopicCards, 600);
 }
 
 function plainTextFromCooked(cooked) {
@@ -372,7 +356,7 @@ async function fetchLastReplyExcerpt(topicId) {
 }
 
 function patchDesktopReplyExcerpts() {
-  if (document.documentElement.classList.contains("mobile-view")) {
+  if (gfIsMobileView()) {
     return;
   }
 
@@ -395,10 +379,10 @@ function patchDesktopReplyExcerpts() {
     });
 }
 
-function scheduleDesktopReplyExcerpts() {
-  requestAnimationFrame(patchDesktopReplyExcerpts);
-  setTimeout(patchDesktopReplyExcerpts, 250);
-  setTimeout(patchDesktopReplyExcerpts, 900);
+function resetDesktopReplyExcerptMarkers() {
+  document.querySelectorAll(".gf-last-reply-excerpt[data-gf-excerpt-loaded]").forEach((node) => {
+    delete node.dataset.gfExcerptLoaded;
+  });
 }
 
 const GracefulTopicHeader = <template>
@@ -537,42 +521,49 @@ const GracefulLastPostCell = <template>
   </td>
 </template>;
 
-export default apiInitializer("1.34.0", (api) => {
-  let modeIsMobile = document.documentElement.classList.contains("mobile-view");
-  let resizeTimer = null;
+export default apiInitializer((api) => {
+  let patchTimer = null;
 
   const runTopicListPatches = () => {
-    scheduleMobileNativeTopicCardsSync();
-    scheduleGracefulEnglishDates();
-    scheduleDesktopReplyExcerpts();
+    if (gfIsMobileView()) {
+      patchMobileNativeTopicCards();
+    } else {
+      cleanupMobileNativeTopicCards();
+      patchDesktopReplyExcerpts();
+    }
+
+    patchGracefulEnglishDates();
   };
 
-  const scheduleBreakpointSync = () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const nextModeIsMobile = document.documentElement.classList.contains("mobile-view");
-      const modeChanged = nextModeIsMobile !== modeIsMobile;
-      modeIsMobile = nextModeIsMobile;
+  const scheduleTopicListPatches = ({ resetExcerpts = false } = {}) => {
+    if (resetExcerpts) {
+      resetDesktopReplyExcerptMarkers();
+    }
 
-      runTopicListPatches();
-
-      if (modeChanged) {
-        setTimeout(runTopicListPatches, 120);
-        setTimeout(runTopicListPatches, 500);
-      }
-    }, 120);
+    clearTimeout(patchTimer);
+    patchTimer = setTimeout(() => {
+      requestAnimationFrame(runTopicListPatches);
+      setTimeout(runTopicListPatches, 120);
+      setTimeout(runTopicListPatches, 360);
+      setTimeout(runTopicListPatches, 900);
+    }, 30);
   };
 
-  window.addEventListener("resize", scheduleBreakpointSync, { passive: true });
-  window.addEventListener("orientationchange", scheduleBreakpointSync, { passive: true });
+  const scheduleViewportChange = () => scheduleTopicListPatches({ resetExcerpts: true });
 
-  new MutationObserver(scheduleBreakpointSync).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
+  window.addEventListener("resize", scheduleViewportChange, { passive: true });
+  window.addEventListener("orientationchange", scheduleViewportChange, { passive: true });
+
+  new MutationObserver(() => scheduleTopicListPatches({ resetExcerpts: true })).observe(
+    document.documentElement,
+    {
+      attributes: true,
+      attributeFilter: ["class"],
+    }
+  );
 
   api.onPageChange(() => {
-    runTopicListPatches();
+    scheduleTopicListPatches({ resetExcerpts: true });
   });
 
   api.registerValueTransformer("topic-list-columns", ({ value: columns }) => {
@@ -591,5 +582,5 @@ export default apiInitializer("1.34.0", (api) => {
     });
   });
 
-  runTopicListPatches();
+  scheduleTopicListPatches({ resetExcerpts: true });
 });
