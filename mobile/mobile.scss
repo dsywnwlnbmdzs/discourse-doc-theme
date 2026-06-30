@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.9 */
+/* Graceful Theme Doc Mod v11.0.10 */
 @import "common/foundation/variables";
 
 body {
@@ -42,11 +42,6 @@ body {
   .d-header-icons .d-icon {
     font-size: 1.5em;
   }
-}
-
-.topic-list-main-link,
-.topic-list .main-link {
-  line-height: var(--gf-topic-title-line-height, 1.2);
 }
 
 img.avatar {
