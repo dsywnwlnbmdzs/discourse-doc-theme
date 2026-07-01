@@ -50,7 +50,9 @@ function gfIsMobileView() {
   return document.documentElement.classList.contains("mobile-view");
 }
 
-function gfTopicLookup() {
+// Legacy fallback used only by the native mobile topic-list DOM patch.
+// Desktop and GJS-rendered cells use Discourse's official @topic data directly.
+function gfLegacyPreloadedTopicLookup() {
   try {
     const holder = document.querySelector("#data-preloaded");
     if (!holder?.dataset?.preloaded) {
@@ -291,13 +293,13 @@ function patchMobileNativeTopicCards() {
     return;
   }
 
-  const topics = gfTopicLookup();
+  const legacyTopics = gfLegacyPreloadedTopicLookup();
 
   document
     .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
     .forEach((row) => {
       const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
-      const topic = topics[topicId] || {};
+      const topic = legacyTopics[topicId] || {};
       const pullRight = row.querySelector(".pull-right");
       const replies =
         row.querySelector(".pull-right .badge-posts .number")?.textContent?.trim() ||
