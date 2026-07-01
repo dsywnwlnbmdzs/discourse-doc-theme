@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.31 */
+/* Graceful Theme Doc Mod v11.0.32 */
 @use "sass:color";
 
 // Big thanks to jsthon for the initial work on this https://meta.discourse.org/u/jsthon/
@@ -80,9 +80,9 @@ pre {
   --gf-topic-avatar-size: 40px;
   --gf-topic-avatar-gap: 10px;
   --gf-topic-avatar-radius: 3px;
-  --gf-topic-title-font-size: 1.04em;
+  --gf-topic-title-font-size: 1.07em;
   --gf-topic-title-meta-gap: 6px;
-  --gf-topic-title-line-height: 1.18;
+  --gf-topic-title-line-height: 1.22;
   --gf-topic-meta-font-size: 0.86em;
   --gf-topic-meta-line-height: 1.2;
   --gf-topic-meta-row-gap: 4px;
@@ -106,6 +106,14 @@ pre {
 }
 
 .topic-list {
+  .gf-topic-left .title,
+  .topic-item-metadata.right > .main-link .title,
+  .topic-item-metadata.right > .topic-list-main-link .title,
+  .topic-item-metadata.right > .topic-list-main-link a.title {
+    font-size: var(--gf-topic-title-font-size);
+    line-height: var(--gf-topic-title-line-height);
+  }
+
   .gf-topic-meta .badge-category__wrapper,
   .gf-topic-meta .badge-category,
   .gf-topic-meta .badge-category__name,
