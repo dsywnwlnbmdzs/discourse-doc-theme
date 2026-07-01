@@ -12,6 +12,8 @@ import DUserLink from "discourse/ui-kit/d-user-link";
 import { i18n } from "discourse-i18n";
 import { longDate } from "discourse/lib/formatter";
 
+const GF_CLEANUP_KEY = "__gracefulTopicListCleanup";
+
 const gfCategoryColorStyle = helper(function ([category]) {
   const raw =
     category?.color ||
@@ -522,7 +524,10 @@ const GracefulLastPostCell = <template>
 </template>;
 
 export default apiInitializer((api) => {
+  globalThis[GF_CLEANUP_KEY]?.();
+
   let patchTimer = null;
+  const cleanupCallbacks = [];
 
   const runTopicListPatches = () => {
     if (gfIsMobileView()) {
@@ -552,15 +557,25 @@ export default apiInitializer((api) => {
   const scheduleViewportChange = () => scheduleTopicListPatches({ resetExcerpts: true });
 
   window.addEventListener("resize", scheduleViewportChange, { passive: true });
-  window.addEventListener("orientationchange", scheduleViewportChange, { passive: true });
+  cleanupCallbacks.push(() => window.removeEventListener("resize", scheduleViewportChange));
 
-  new MutationObserver(() => scheduleTopicListPatches({ resetExcerpts: true })).observe(
-    document.documentElement,
-    {
-      attributes: true,
-      attributeFilter: ["class"],
-    }
+  window.addEventListener("orientationchange", scheduleViewportChange, { passive: true });
+  cleanupCallbacks.push(() => window.removeEventListener("orientationchange", scheduleViewportChange));
+
+  const htmlClassObserver = new MutationObserver(() =>
+    scheduleTopicListPatches({ resetExcerpts: true })
   );
+  htmlClassObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  cleanupCallbacks.push(() => htmlClassObserver.disconnect());
+
+  globalThis[GF_CLEANUP_KEY] = () => {
+    clearTimeout(patchTimer);
+    cleanupCallbacks.splice(0).forEach((callback) => callback());
+    delete globalThis[GF_CLEANUP_KEY];
+  };
 
   api.onPageChange(() => {
     scheduleTopicListPatches({ resetExcerpts: true });
