@@ -50,6 +50,44 @@ function gfIsMobileView() {
   return document.documentElement.classList.contains("mobile-view");
 }
 
+function gfLegacyPreloadedTopicLookup() {
+  try {
+    const holder = document.querySelector("#data-preloaded");
+    if (!holder?.dataset?.preloaded) {
+      return {};
+    }
+
+    const preloaded = JSON.parse(holder.dataset.preloaded);
+    const payload = JSON.parse(preloaded.topic_list || "{}");
+    const users = {};
+
+    for (const user of payload.users || []) {
+      users[user.id] = user.username;
+    }
+
+    const topics = {};
+    for (const topic of payload.topic_list?.topics || []) {
+      let creatorUsername = topic.creator_username || "";
+      if (!creatorUsername && topic.posters?.length) {
+        creatorUsername = users[topic.posters[0].user_id] || "";
+      }
+
+      topics[topic.id] = {
+        replyCount: topic.reply_count ?? 0,
+        views: topic.views ?? 0,
+        creatorUsername,
+        lastPosterUsername: topic.last_poster_username || creatorUsername,
+        bumpedAt: topic.bumped_at || topic.last_posted_at || topic.created_at || "",
+        createdAt: topic.created_at || "",
+      };
+    }
+
+    return topics;
+  } catch (_e) {
+    return {};
+  }
+}
+
 function gfEnglishRelativeTime(input) {
   if (!input) {
     return "";
@@ -104,6 +142,184 @@ function patchGracefulEnglishDates() {
       node.textContent = english;
       node.dataset.gfEnglishTimeApplied = "true";
     }
+  });
+}
+
+function mobileActionIconHtml(hasReply) {
+  const icon = hasReply ? "reply" : "far-pen-to-square";
+  return `<svg class="fa d-icon d-icon-${icon} svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#${icon}"></use></svg>`;
+}
+
+function mobileTimeIconHtml() {
+  return `<svg class="fa d-icon d-icon-clock svg-icon svg-string" width="1em" height="1em" aria-hidden="true"><use href="#clock"></use></svg>`;
+}
+
+function ensureMobileRepliesBadge(pullRight) {
+  let repliesBadge = pullRight.querySelector(".gf-mobile-replies-badge");
+  if (!repliesBadge) {
+    repliesBadge = document.createElement("span");
+    repliesBadge.className = "gf-mobile-replies-badge";
+    pullRight.prepend(repliesBadge);
+  }
+  return repliesBadge;
+}
+
+function ensureMobileViewsBadge(pullRight) {
+  let viewsBadge = pullRight.querySelector(".gf-mobile-views-badge");
+  if (!viewsBadge) {
+    viewsBadge = document.createElement("span");
+    viewsBadge.className = "gf-mobile-views-badge";
+    pullRight.append(viewsBadge);
+  }
+  return viewsBadge;
+}
+
+function updateMobileBadge(badge, value, title) {
+  const text = String(value ?? "");
+  if (badge.dataset.gfBadgeValue === text) {
+    return;
+  }
+
+  badge.dataset.gfBadgeValue = text;
+  badge.textContent = text;
+  badge.title = title;
+  badge.setAttribute("aria-label", title);
+}
+
+function ensureMobileMetaUser(stats, activity) {
+  let status = stats.querySelector(":scope > .gf-mobile-meta-status");
+
+  if (!status) {
+    status = document.createElement("span");
+    status.className = "gf-mobile-meta-status";
+    status.innerHTML = `
+      <span class="gf-mobile-action-icon" aria-hidden="true"></span>
+      <a class="gf-mobile-meta-user" href="#" tabindex="0"></a>
+    `;
+    stats.insertBefore(status, activity || null);
+  } else if (activity && status.nextElementSibling !== activity) {
+    stats.insertBefore(status, activity);
+  }
+
+  if (!status.querySelector(":scope > .gf-mobile-action-icon")) {
+    const icon = document.createElement("span");
+    icon.className = "gf-mobile-action-icon";
+    icon.setAttribute("aria-hidden", "true");
+    status.prepend(icon);
+  }
+
+  return status;
+}
+
+function ensureMobileMetaTime(activity) {
+  let text = activity.querySelector(":scope > .gf-mobile-time-text");
+
+  if (!text) {
+    activity.innerHTML = `
+      <span class="gf-mobile-time-icon" aria-hidden="true">${mobileTimeIconHtml()}</span>
+      <span class="gf-mobile-time-text"></span>
+    `;
+    text = activity.querySelector(":scope > .gf-mobile-time-text");
+  }
+
+  return text;
+}
+
+function decorateMobileMetadata(row, topic) {
+  const stats = row.querySelector(".topic-item-metadata.right > .topic-item-stats");
+  if (!stats || !topic) {
+    return;
+  }
+
+  const category = stats.querySelector(":scope > .topic-item-stats__category-tags");
+  let activity = stats.querySelector(":scope > .activity");
+
+  if (!activity) {
+    activity = document.createElement("span");
+    activity.className = "activity gf-mobile-meta-time";
+    stats.append(activity);
+  }
+
+  activity.classList.add("gf-mobile-meta-time");
+
+  if (category && stats.firstElementChild !== category) {
+    stats.insertBefore(category, stats.firstElementChild);
+  }
+
+  const hasReply = Number(topic.replyCount || 0) > 0;
+  const username = hasReply
+    ? topic.lastPosterUsername || topic.creatorUsername || ""
+    : topic.creatorUsername || topic.lastPosterUsername || "";
+  const timeSource = hasReply ? topic.bumpedAt : topic.createdAt;
+  const timeText = gfEnglishRelativeTime(timeSource);
+
+  const status = ensureMobileMetaUser(stats, activity);
+  const icon = status.querySelector(".gf-mobile-action-icon");
+  const user = status.querySelector(".gf-mobile-meta-user");
+
+  status.classList.toggle("gf-mobile-meta-replied", hasReply);
+  status.classList.toggle("gf-mobile-meta-started", !hasReply);
+
+  const iconState = hasReply ? "reply" : "start";
+  if (icon.dataset.gfIconState !== iconState) {
+    icon.dataset.gfIconState = iconState;
+    icon.innerHTML = mobileActionIconHtml(hasReply);
+  }
+
+  if (username && user.dataset.gfUsername !== username) {
+    user.dataset.gfUsername = username;
+    user.textContent = username;
+    user.href = `/u/${encodeURIComponent(username)}`;
+    user.dataset.userCard = username;
+    user.setAttribute("aria-label", `${username} 的个人资料`);
+  }
+
+  const text = ensureMobileMetaTime(activity);
+  if (text.textContent !== timeText) {
+    text.textContent = timeText;
+  }
+
+  activity.setAttribute("aria-label", hasReply ? "最后回复时间" : "发帖时间");
+}
+
+function patchMobileNativeTopicCards() {
+  if (!gfIsMobileView()) {
+    cleanupMobileNativeTopicCards();
+    return;
+  }
+
+  const topics = gfLegacyPreloadedTopicLookup();
+
+  document
+    .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
+    .forEach((row) => {
+      const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
+      const topic = topics[topicId] || {};
+      const pullRight = row.querySelector(".pull-right");
+      const replies =
+        row.querySelector(".pull-right .badge-posts .number")?.textContent?.trim() ||
+        topic.replyCount ||
+        "0";
+
+      decorateMobileMetadata(row, topic);
+
+      if (!pullRight) {
+        return;
+      }
+
+      updateMobileBadge(ensureMobileRepliesBadge(pullRight), replies, `回复数：${replies}`);
+      updateMobileBadge(ensureMobileViewsBadge(pullRight), topic.views ?? "", `浏览数：${topic.views ?? ""}`);
+    });
+}
+
+function cleanupMobileNativeTopicCards() {
+  document
+    .querySelectorAll(".gf-mobile-replies-badge, .gf-mobile-views-badge, .gf-mobile-meta-status")
+    .forEach((node) => node.remove());
+
+  document.querySelectorAll(".gf-mobile-meta-time").forEach((node) => {
+    node.classList.remove("gf-mobile-meta-time");
+    node.innerHTML = "";
   });
 }
 
@@ -248,57 +464,6 @@ const GracefulTopicCell = <template>
                 <span class="gf-created-at">{{gfTinyDate @topic.createdAt}}</span>
               </span>
             {{/if}}
-
-            {{#if @topic.replyCount}}
-              {{#if @topic.lastPosterUser}}
-                <span
-                  class="gf-mobile-meta-status gf-mobile-meta-replied"
-                  title={{concat "最后回复：" @topic.lastPosterUser.username}}
-                  aria-label={{concat "最后回复：" @topic.lastPosterUser.username}}
-                >
-                  <span class="gf-mobile-action-icon" aria-hidden="true">{{dIcon "reply"}}</span>
-                  <DUserLink class="gf-mobile-meta-user" @username={{@topic.lastPosterUser.username}}>
-                    {{@topic.lastPosterUser.username}}
-                  </DUserLink>
-                </span>
-              {{/if}}
-
-              {{#if @topic.bumpedAt}}
-                <span class="activity gf-mobile-meta-time" aria-label="最后回复时间">
-                  <span class="gf-mobile-time-icon" aria-hidden="true">{{dIcon "clock"}}</span>
-                  <span class="gf-mobile-time-text">{{gfEnglishDate @topic.bumpedAt}}</span>
-                </span>
-              {{/if}}
-            {{else}}
-              {{#if @topic.creator}}
-                <span
-                  class="gf-mobile-meta-status gf-mobile-meta-started"
-                  title={{concat "发帖人：" @topic.creator.username}}
-                  aria-label={{concat "发帖人：" @topic.creator.username}}
-                >
-                  <span class="gf-mobile-action-icon" aria-hidden="true">{{dIcon "far-pen-to-square"}}</span>
-                  <DUserLink class="gf-mobile-meta-user" @username={{@topic.creator.username}}>
-                    {{@topic.creator.username}}
-                  </DUserLink>
-                </span>
-              {{/if}}
-
-              {{#if @topic.createdAt}}
-                <span class="activity gf-mobile-meta-time" aria-label="发帖时间">
-                  <span class="gf-mobile-time-icon" aria-hidden="true">{{dIcon "clock"}}</span>
-                  <span class="gf-mobile-time-text">{{gfEnglishDate @topic.createdAt}}</span>
-                </span>
-              {{/if}}
-            {{/if}}
-          </div>
-
-          <div class="pull-right gf-mobile-topic-badges" aria-hidden="true">
-            <span class="gf-mobile-replies-badge" title={{concat "回复数：" @topic.replyCount}} aria-label={{concat "回复数：" @topic.replyCount}}>
-              {{@topic.replyCount}}
-            </span>
-            <span class="gf-mobile-views-badge" title={{concat "浏览数：" @topic.views}} aria-label={{concat "浏览数：" @topic.views}}>
-              {{@topic.views}}
-            </span>
           </div>
         </div>
       </div>
@@ -367,7 +532,10 @@ export default apiInitializer((api) => {
   const cleanupCallbacks = [];
 
   const runTopicListPatches = () => {
-    if (!gfIsMobileView()) {
+    if (gfIsMobileView()) {
+      patchMobileNativeTopicCards();
+    } else {
+      cleanupMobileNativeTopicCards();
       patchDesktopReplyExcerpts();
     }
 
