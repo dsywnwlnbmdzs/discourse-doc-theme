@@ -327,8 +327,8 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   gap: 2em;
 }
 
-// Topic list v2. Desktop left topic cell is one column. The stats and latest
-// reply summary live in the separate GJS activity cell, not inside gf-topic-row.
+// Topic list v2. Desktop left topic cell is one column. The desktop activity
+// cell contains two internal columns: posts/views and latest reply summary.
 .topic-list {
   .gf-topic-list-v2-row {
     > td.posters,
@@ -422,7 +422,17 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
     background-color: var(--category-badge-color) !important;
   }
 
+  .gf-last-post-cell {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 240px);
+    column-gap: 12px;
+    align-items: start;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
   .gf-desktop-stats {
+    grid-column: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
@@ -452,6 +462,7 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   }
 
   .gf-last-post-summary {
+    grid-column: 2;
     display: grid;
     grid-template-columns: 24px minmax(0, 1fr);
     column-gap: 8px;
