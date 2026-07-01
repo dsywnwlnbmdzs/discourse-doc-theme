@@ -215,6 +215,10 @@ function ensureMobileMetaTime(activity) {
   let text = activity.querySelector(":scope > .gf-mobile-time-text");
 
   if (!text) {
+    if (activity.dataset.gfOriginalHtml === undefined) {
+      activity.dataset.gfOriginalHtml = activity.innerHTML;
+    }
+
     activity.innerHTML = `
       <span class="gf-mobile-time-icon" aria-hidden="true">${mobileTimeIconHtml()}</span>
       <span class="gf-mobile-time-text"></span>
@@ -319,7 +323,11 @@ function cleanupMobileNativeTopicCards() {
 
   document.querySelectorAll(".gf-mobile-meta-time").forEach((node) => {
     node.classList.remove("gf-mobile-meta-time");
-    node.innerHTML = "";
+
+    if (node.dataset.gfOriginalHtml !== undefined) {
+      node.innerHTML = node.dataset.gfOriginalHtml;
+      delete node.dataset.gfOriginalHtml;
+    }
   });
 }
 
