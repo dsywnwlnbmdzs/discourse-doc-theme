@@ -338,7 +338,6 @@ function plainTextFromCooked(cooked) {
 }
 
 const desktopExcerptCache = new Map();
-let desktopExcerptObserver = null;
 
 async function fetchLastReplyExcerpt(topicId) {
   if (!topicId) {
@@ -368,87 +367,34 @@ async function fetchLastReplyExcerpt(topicId) {
   return promise;
 }
 
-function loadDesktopReplyExcerpt(row, excerptNode) {
-  const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
-  const repliesText = row.querySelector(".gf-stat-posts .gf-stat-number")?.textContent || "0";
-  const replies = Number.parseInt(repliesText.trim(), 10) || 0;
-
-  if (!topicId || !excerptNode || replies <= 0 || excerptNode.dataset.gfExcerptLoaded === "true") {
-    return;
-  }
-
-  excerptNode.dataset.gfExcerptLoaded = "true";
-  fetchLastReplyExcerpt(topicId).then((excerpt) => {
-    excerptNode.textContent = excerpt || "暂无回复摘要";
-  });
-}
-
-function ensureDesktopExcerptObserver() {
-  if (desktopExcerptObserver || typeof IntersectionObserver === "undefined") {
-    return desktopExcerptObserver;
-  }
-
-  desktopExcerptObserver = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) {
-          continue;
-        }
-
-        const excerptNode = entry.target;
-        desktopExcerptObserver?.unobserve(excerptNode);
-        const row = excerptNode.closest("tr.topic-list-item");
-        if (row) {
-          loadDesktopReplyExcerpt(row, excerptNode);
-        }
-      }
-    },
-    { rootMargin: "160px 0px" }
-  );
-
-  return desktopExcerptObserver;
-}
-
 function patchDesktopReplyExcerpts() {
   if (gfIsMobileView()) {
     return;
   }
 
-  const observer = ensureDesktopExcerptObserver();
-
   document
     .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
     .forEach((row) => {
+      const topicId = Number.parseInt(row.dataset.topicId || "0", 10);
       const excerptNode = row.querySelector(".gf-last-reply-excerpt");
+      const repliesText = row.querySelector(".gf-stat-posts .gf-stat-number")?.textContent || "0";
+      const replies = Number.parseInt(repliesText.trim(), 10) || 0;
 
-      if (!excerptNode || excerptNode.dataset.gfExcerptLoaded === "true") {
+      if (!topicId || !excerptNode || replies <= 0 || excerptNode.dataset.gfExcerptLoaded === "true") {
         return;
       }
 
-      if (!observer) {
-        loadDesktopReplyExcerpt(row, excerptNode);
-        return;
-      }
-
-      if (excerptNode.dataset.gfExcerptObserved === "true") {
-        return;
-      }
-
-      excerptNode.dataset.gfExcerptObserved = "true";
-      observer.observe(excerptNode);
+      excerptNode.dataset.gfExcerptLoaded = "true";
+      fetchLastReplyExcerpt(topicId).then((excerpt) => {
+        excerptNode.textContent = excerpt || "暂无回复摘要";
+      });
     });
 }
 
 function resetDesktopReplyExcerptMarkers() {
-  desktopExcerptObserver?.disconnect();
-  desktopExcerptObserver = null;
-
-  document
-    .querySelectorAll(".gf-last-reply-excerpt[data-gf-excerpt-loaded], .gf-last-reply-excerpt[data-gf-excerpt-observed]")
-    .forEach((node) => {
-      delete node.dataset.gfExcerptLoaded;
-      delete node.dataset.gfExcerptObserved;
-    });
+  document.querySelectorAll(".gf-last-reply-excerpt[data-gf-excerpt-loaded]").forEach((node) => {
+    delete node.dataset.gfExcerptLoaded;
+  });
 }
 
 const GracefulTopicHeader = <template>
@@ -647,9 +593,6 @@ export default apiInitializer((api) => {
       cancelAnimationFrame(patchFrame);
       patchFrame = null;
     }
-
-    desktopExcerptObserver?.disconnect();
-    desktopExcerptObserver = null;
 
     cleanupCallbacks.splice(0).forEach((callback) => callback());
     delete globalThis[GF_CLEANUP_KEY];
