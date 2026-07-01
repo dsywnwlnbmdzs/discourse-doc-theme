@@ -171,12 +171,6 @@ pre {
     color: var(--primary-medium);
   }
 
-  .gf-mobile-meta-status,
-  .gf-mobile-meta-time,
-  .gf-mobile-topic-badges {
-    display: none !important;
-  }
-
   .gf-topic-meta .badge-category__wrapper,
   .gf-topic-meta .badge-category,
   .gf-topic-meta .badge-category__name,
@@ -220,28 +214,6 @@ pre {
   .gf-last-reply-excerpt {
     margin-top: 4px;
     padding-left: 0;
-  }
-}
-
-html.mobile-view .topic-list {
-  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-status {
-    display: inline-flex !important;
-  }
-
-  .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time {
-    display: inline-flex !important;
-  }
-
-  .topic-item-metadata.right > .gf-mobile-topic-badges {
-    display: grid !important;
-  }
-}
-
-html:not(.mobile-view) .topic-list {
-  .gf-mobile-meta-status,
-  .gf-mobile-meta-time,
-  .gf-mobile-topic-badges {
-    display: none !important;
   }
 }
 
