@@ -161,6 +161,7 @@ function ensureMobileRepliesBadge(pullRight) {
   if (!repliesBadge) {
     repliesBadge = document.createElement("span");
     repliesBadge.className = "gf-mobile-replies-badge";
+    repliesBadge.dataset.gfLegacyPatch = "true";
     pullRight.prepend(repliesBadge);
   }
   return repliesBadge;
@@ -171,12 +172,17 @@ function ensureMobileViewsBadge(pullRight) {
   if (!viewsBadge) {
     viewsBadge = document.createElement("span");
     viewsBadge.className = "gf-mobile-views-badge";
+    viewsBadge.dataset.gfLegacyPatch = "true";
     pullRight.append(viewsBadge);
   }
   return viewsBadge;
 }
 
 function updateBadge(badge, value, title) {
+  if (!badge?.dataset?.gfLegacyPatch) {
+    return;
+  }
+
   const text = String(value ?? "");
 
   if (badge.dataset.gfBadgeValue === text) {
@@ -319,7 +325,7 @@ function patchMobileNativeTopicCards() {
 
 function cleanupMobileNativeTopicCards() {
   document
-    .querySelectorAll(".gf-mobile-replies-badge, .gf-mobile-views-badge")
+    .querySelectorAll(".gf-mobile-replies-badge[data-gf-legacy-patch], .gf-mobile-views-badge[data-gf-legacy-patch]")
     .forEach((node) => node.remove());
 }
 
@@ -464,6 +470,15 @@ const GracefulTopicCell = <template>
                 <span class="gf-created-at">{{gfTinyDate @topic.createdAt}}</span>
               </span>
             {{/if}}
+          </div>
+
+          <div class="pull-right gf-mobile-topic-badges" aria-hidden="true">
+            <span class="gf-mobile-replies-badge" title={{concat "回复数：" @topic.replyCount}} aria-label={{concat "回复数：" @topic.replyCount}}>
+              {{@topic.replyCount}}
+            </span>
+            <span class="gf-mobile-views-badge" title={{concat "浏览数：" @topic.views}} aria-label={{concat "浏览数：" @topic.views}}>
+              {{@topic.views}}
+            </span>
           </div>
         </div>
       </div>
