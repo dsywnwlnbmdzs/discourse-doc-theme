@@ -1,4 +1,4 @@
-/* Graceful Theme Doc Mod v11.0.30 */
+/* Graceful Theme Doc Mod v11.0.31 */
 @use "sass:color";
 
 // Big thanks to jsthon for the initial work on this https://meta.discourse.org/u/jsthon/
@@ -106,71 +106,6 @@ pre {
 }
 
 .topic-list {
-  .gf-topic-list-v2-row > td.gf-topic-cell,
-  tbody.topic-list-body > tr.topic-list-item > td.topic-list-data {
-    box-sizing: border-box;
-    padding: var(--gf-topic-row-padding-block) var(--gf-topic-row-padding-inline) !important;
-  }
-
-  .gf-topic-left,
-  .topic-item-metadata.right {
-    min-width: 0;
-  }
-
-  .gf-topic-left .pull-left,
-  .topic-list-item .pull-left {
-    width: var(--gf-topic-avatar-size);
-    height: var(--gf-topic-avatar-size);
-    margin-right: var(--gf-topic-avatar-gap);
-    line-height: 0;
-  }
-
-  .gf-topic-left .pull-left img.avatar,
-  .topic-list-item .pull-left img.avatar {
-    width: var(--gf-topic-avatar-size);
-    height: var(--gf-topic-avatar-size);
-    max-width: var(--gf-topic-avatar-size);
-    max-height: var(--gf-topic-avatar-size);
-    margin-top: 0;
-    border-radius: var(--gf-topic-avatar-radius);
-    object-fit: cover;
-  }
-
-  .gf-topic-title,
-  .topic-item-metadata.right > .main-link,
-  .topic-item-metadata.right > .topic-list-main-link {
-    min-width: 0;
-    padding: 0;
-    margin: 0;
-    line-height: var(--gf-topic-title-line-height);
-  }
-
-  .gf-topic-title .title,
-  .topic-item-metadata.right > .main-link .title,
-  .topic-item-metadata.right > .topic-list-main-link .title,
-  .topic-item-metadata.right > .topic-list-main-link a.title {
-    overflow-wrap: normal;
-    word-break: normal;
-    font-size: var(--gf-topic-title-font-size);
-    font-weight: 700;
-    line-height: var(--gf-topic-title-line-height);
-  }
-
-  .gf-topic-meta,
-  .gf-topic-left .topic-item-stats,
-  .topic-item-metadata.right > .topic-item-stats {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--gf-topic-meta-row-gap) var(--gf-topic-meta-column-gap);
-    min-width: 0;
-    margin-top: var(--gf-topic-title-meta-gap);
-    padding: 0;
-    font-size: var(--gf-topic-meta-font-size);
-    line-height: var(--gf-topic-meta-line-height);
-    color: var(--primary-medium);
-  }
-
   .gf-topic-meta .badge-category__wrapper,
   .gf-topic-meta .badge-category,
   .gf-topic-meta .badge-category__name,
@@ -187,33 +122,6 @@ pre {
   .topic-item-metadata.right > .topic-item-stats .badge-category.--style-square::before,
   .topic-item-metadata.right > .topic-item-stats .badge-category.--style-bar::before {
     background-color: var(--category-badge-color) !important;
-  }
-
-  .gf-desktop-stats {
-    align-self: center;
-    padding-top: 0 !important;
-    transform: translateY(1px);
-  }
-
-  .gf-last-post-summary {
-    display: block !important;
-  }
-
-  .gf-last-post-summary.gf-no-reply-summary {
-    display: flex !important;
-    align-items: center;
-  }
-
-  .gf-last-reply-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
-
-  .gf-last-reply-excerpt {
-    margin-top: 4px;
-    padding-left: 0;
   }
 }
 
