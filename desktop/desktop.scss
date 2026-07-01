@@ -327,9 +327,8 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   gap: 2em;
 }
 
-// Topic list v2. Desktop reuses the mobile-like left block
-// (.pull-left + .topic-item-metadata.right + .main-link + .topic-item-stats),
-// then extends it with desktop-only stats and latest reply columns.
+// Topic list v2. Desktop left topic cell is one column. The stats and latest
+// reply summary live in the separate GJS activity cell, not inside gf-topic-row.
 .topic-list {
   .gf-topic-list-v2-row {
     > td.posters,
@@ -347,11 +346,9 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   }
 
   .gf-topic-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 104px 240px;
-    align-items: start;
-    column-gap: var(--gf-topic-avatar-gap, 10px);
+    display: block;
     width: 100%;
+    min-width: 0;
   }
 
   .gf-topic-left {
@@ -396,7 +393,8 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   }
 
   .gf-topic-left .title {
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .gf-topic-left .topic-item-stats,
@@ -509,11 +507,5 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-  }
-}
-
-@media screen and (width <= 900px) {
-  .topic-list .gf-topic-row {
-    grid-template-columns: minmax(0, 1fr) 88px 180px;
   }
 }
