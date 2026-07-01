@@ -537,9 +537,13 @@ export default apiInitializer((api) => {
   globalThis[GF_CLEANUP_KEY]?.();
 
   let patchTimer = null;
+  let patchFrame = null;
+  let patchFollowupTimer = null;
   const cleanupCallbacks = [];
 
   const runTopicListPatches = () => {
+    patchFrame = null;
+
     if (gfIsMobileView()) {
       patchMobileNativeTopicCards();
     } else {
@@ -556,11 +560,18 @@ export default apiInitializer((api) => {
     }
 
     clearTimeout(patchTimer);
+    clearTimeout(patchFollowupTimer);
+
+    if (patchFrame) {
+      cancelAnimationFrame(patchFrame);
+      patchFrame = null;
+    }
+
     patchTimer = setTimeout(() => {
-      requestAnimationFrame(runTopicListPatches);
-      setTimeout(runTopicListPatches, 120);
-      setTimeout(runTopicListPatches, 360);
-      setTimeout(runTopicListPatches, 900);
+      patchFrame = requestAnimationFrame(() => {
+        runTopicListPatches();
+        patchFollowupTimer = setTimeout(runTopicListPatches, 250);
+      });
     }, 30);
   };
 
@@ -583,6 +594,13 @@ export default apiInitializer((api) => {
 
   globalThis[GF_CLEANUP_KEY] = () => {
     clearTimeout(patchTimer);
+    clearTimeout(patchFollowupTimer);
+
+    if (patchFrame) {
+      cancelAnimationFrame(patchFrame);
+      patchFrame = null;
+    }
+
     cleanupCallbacks.splice(0).forEach((callback) => callback());
     delete globalThis[GF_CLEANUP_KEY];
   };
