@@ -50,92 +50,6 @@ function gfIsMobileView() {
   return document.documentElement.classList.contains("mobile-view");
 }
 
-function gfGet(object, key) {
-  return object?.[key] ?? object?.get?.(key);
-}
-
-function gfArray(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function gfTopicUsername(user) {
-  return gfGet(user, "username") || gfGet(user, "name") || "";
-}
-
-function gfNormalizeTopic(topic) {
-  const id = gfGet(topic, "id");
-  if (!id) {
-    return null;
-  }
-
-  const creator = gfGet(topic, "creator");
-  const lastPosterUser = gfGet(topic, "lastPosterUser") || gfGet(topic, "last_poster_user");
-  const posters = gfArray(gfGet(topic, "posters"));
-  const firstPoster = posters[0];
-
-  const creatorUsername =
-    gfTopicUsername(creator) ||
-    gfGet(topic, "creator_username") ||
-    gfGet(firstPoster, "username") ||
-    "";
-
-  const lastPosterUsername =
-    gfTopicUsername(lastPosterUser) ||
-    gfGet(topic, "last_poster_username") ||
-    creatorUsername;
-
-  const createdAt = gfGet(topic, "createdAt") || gfGet(topic, "created_at") || "";
-  const bumpedAt =
-    gfGet(topic, "bumpedAt") ||
-    gfGet(topic, "bumped_at") ||
-    gfGet(topic, "last_posted_at") ||
-    createdAt;
-
-  return {
-    replyCount: gfGet(topic, "replyCount") ?? gfGet(topic, "reply_count") ?? 0,
-    views: gfGet(topic, "views") ?? 0,
-    creatorUsername,
-    lastPosterUsername,
-    bumpedAt,
-    createdAt,
-  };
-}
-
-function gfAddTopicsToLookup(lookup, topics) {
-  for (const topic of gfArray(topics)) {
-    const id = gfGet(topic, "id");
-    const normalized = gfNormalizeTopic(topic);
-    if (id && normalized) {
-      lookup[id] = normalized;
-    }
-  }
-}
-
-function gfCurrentTopicLookup(api) {
-  const lookup = {};
-  const container = api?.container;
-  const candidates = [
-    "controller:discovery/topics",
-    "controller:discovery",
-    "controller:tag-show",
-    "controller:category",
-  ];
-
-  for (const name of candidates) {
-    const controller = container?.lookup?.(name);
-    const model = gfGet(controller, "model");
-
-    gfAddTopicsToLookup(lookup, gfGet(controller, "topics"));
-    gfAddTopicsToLookup(lookup, gfGet(model, "topics"));
-    gfAddTopicsToLookup(lookup, gfGet(gfGet(model, "topicList"), "topics"));
-    gfAddTopicsToLookup(lookup, gfGet(gfGet(model, "topic_list"), "topics"));
-    gfAddTopicsToLookup(lookup, gfGet(gfGet(controller, "topicList"), "topics"));
-    gfAddTopicsToLookup(lookup, gfGet(gfGet(controller, "topic_list"), "topics"));
-  }
-
-  return lookup;
-}
-
 function gfLegacyPreloadedTopicLookup() {
   try {
     const holder = document.querySelector("#data-preloaded");
@@ -172,13 +86,6 @@ function gfLegacyPreloadedTopicLookup() {
   } catch (_e) {
     return {};
   }
-}
-
-function gfTopicLookup(api) {
-  return {
-    ...gfLegacyPreloadedTopicLookup(),
-    ...gfCurrentTopicLookup(api),
-  };
 }
 
 function gfEnglishRelativeTime(input) {
@@ -379,13 +286,13 @@ function decorateMobileMetadata(row, topic) {
   activity.setAttribute("aria-label", hasReply ? "最后回复时间" : "发帖时间");
 }
 
-function patchMobileNativeTopicCards(api) {
+function patchMobileNativeTopicCards() {
   if (!gfIsMobileView()) {
     cleanupMobileNativeTopicCards();
     return;
   }
 
-  const topics = gfTopicLookup(api);
+  const topics = gfLegacyPreloadedTopicLookup();
 
   document
     .querySelectorAll(".topic-list tbody.topic-list-body > tr.topic-list-item")
@@ -638,7 +545,7 @@ export default apiInitializer((api) => {
     patchFrame = null;
 
     if (gfIsMobileView()) {
-      patchMobileNativeTopicCards(api);
+      patchMobileNativeTopicCards();
     } else {
       cleanupMobileNativeTopicCards();
       patchDesktopReplyExcerpts();
@@ -667,6 +574,7 @@ export default apiInitializer((api) => {
       });
     }, 30);
   };
+
 
   const htmlClassObserver = new MutationObserver(() =>
     scheduleTopicListPatches({ resetExcerpts: true })
