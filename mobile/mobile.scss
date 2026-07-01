@@ -257,7 +257,7 @@ img.avatar {
   }
 
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-status {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     flex: 0 1 auto;
     gap: 2px;
@@ -305,12 +305,12 @@ img.avatar {
   .topic-item-metadata.right > .topic-item-stats .age.activity::before,
   .topic-item-metadata.right > .topic-item-stats .num.activity::before,
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time::before {
-    content: none !important;
-    display: none !important;
+    content: none;
+    display: none;
   }
 
   .topic-item-metadata.right > .topic-item-stats .gf-mobile-meta-time {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     flex: 0 0 auto;
     min-width: max-content;
@@ -343,7 +343,7 @@ img.avatar {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
-    display: grid !important;
+    display: grid;
     grid-auto-flow: row;
     grid-auto-rows: 22px;
     row-gap: 4px;
@@ -360,7 +360,7 @@ img.avatar {
 
   .topic-item-metadata.right > .pull-right .gf-mobile-replies-badge,
   .topic-item-metadata.right > .pull-right .gf-mobile-views-badge {
-    display: grid !important;
+    display: grid;
     place-items: center;
     box-sizing: border-box;
     width: 26px;
