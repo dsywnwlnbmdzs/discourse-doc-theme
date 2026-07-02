@@ -350,9 +350,11 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
       display: none;
     }
 
-    > td.gf-topic-cell {
+    > td.gf-topic-cell,
+    > td.topic-list-data.gf-topic-cell {
       box-sizing: border-box;
       padding: 8px 8px 8px 0 !important;
+      padding-left: 0 !important;
       width: 100%;
     }
   }
@@ -366,6 +368,7 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   .gf-topic-left {
     display: block;
     min-width: 0;
+    padding-left: 0 !important;
   }
 
   .gf-topic-left .pull-left {
@@ -396,6 +399,7 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   .gf-topic-title {
     min-width: 0;
     padding: 0;
+    padding-left: 0 !important;
     line-height: var(--gf-topic-title-line-height, 1.2);
   }
 
