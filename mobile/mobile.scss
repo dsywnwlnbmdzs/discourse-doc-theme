@@ -10,8 +10,9 @@ body {
 }
 
 #main-outlet-wrapper.wrap {
-  padding-left: 0;
-  padding-right: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px;
 }
 
 #main-outlet {
@@ -175,8 +176,7 @@ img.avatar {
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
+    padding: var(--gf-topic-row-padding, 8px) !important;
     overflow: hidden;
     border: 1px solid rgb(var(--primary-rgb), 0.12);
     border-radius: var(--gf-topic-avatar-radius);
