@@ -294,7 +294,7 @@ nav.post-controls {
 
 #main-outlet-wrapper {
   box-sizing: border-box;
-  margin: 0;
+  margin: 0 auto;
   padding: 8px;
 
   .sidebar-wrapper {
@@ -519,24 +519,6 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
     padding-left: 10px;
     border-left: 3px solid var(--gf-category-native-color, var(--gf-topic-category-color, var(--tertiary)));
   }
-
-  .topic-list-item[class*="category-1-"] .gf-last-post-summary { border-left-color: var(--category-1-color); }
-  .topic-list-item[class*="category-2-"] .gf-last-post-summary { border-left-color: var(--category-2-color); }
-  .topic-list-item[class*="category-3-"] .gf-last-post-summary { border-left-color: var(--category-3-color); }
-  .topic-list-item[class*="category-4-"] .gf-last-post-summary { border-left-color: var(--category-4-color); }
-  .topic-list-item[class*="category-5-"] .gf-last-post-summary { border-left-color: var(--category-5-color); }
-  .topic-list-item[class*="category-6-"] .gf-last-post-summary { border-left-color: var(--category-6-color); }
-  .topic-list-item[class*="category-7-"] .gf-last-post-summary { border-left-color: var(--category-7-color); }
-  .topic-list-item[class*="category-8-"] .gf-last-post-summary { border-left-color: var(--category-8-color); }
-  .topic-list-item[class*="category-9-"] .gf-last-post-summary { border-left-color: var(--category-9-color); }
-  .topic-list-item[class*="category-10-"] .gf-last-post-summary { border-left-color: var(--category-10-color); }
-  .topic-list-item[class*="category-11-"] .gf-last-post-summary { border-left-color: var(--category-11-color); }
-  .topic-list-item[class*="category-12-"] .gf-last-post-summary { border-left-color: var(--category-12-color); }
-  .topic-list-item[class*="category-13-"] .gf-last-post-summary { border-left-color: var(--category-13-color); }
-  .topic-list-item[class*="category-14-"] .gf-last-post-summary { border-left-color: var(--category-14-color); }
-  .topic-list-item[class*="category-15-"] .gf-last-post-summary { border-left-color: var(--category-15-color); }
-  .topic-list-item.category-staff .gf-last-post-summary { border-left-color: var(--category-3-color); }
-  .topic-list-item.category-general .gf-last-post-summary { border-left-color: var(--category-4-color); }
 
   .gf-no-reply {
     grid-column: 1 / -1;
