@@ -235,20 +235,6 @@ header.d-header {
   background-color: var(--danger-hover, $danger-hover);
 }
 
-.list-controls .combo-box .combo-box-header {
-  background: transparent;
-
-  @media screen and (width >= 775px) {
-    font-size: 1.1487em;
-  }
-  border-color: transparent;
-}
-
-.select-kit.combo-box.category-drop .category-drop-header,
-.select-kit.combo-box.tag-drop .tag-drop-header {
-  border-radius: 4px;
-}
-
 .navigation-controls {
   .fk-d-button-tooltip {
     button {
@@ -261,92 +247,98 @@ header.d-header {
   margin-bottom: 0;
 }
 
-// Visual-only polish for topic-list controls. Keep existing layout and sizing intact.
-.list-controls {
+// Match the uploaded reference theme controls: smaller boxes, lighter text, no heavy shadow.
+#main-outlet .list-controls {
+  margin: 0 0 0.65rem !important;
+  padding: 0 !important;
+
+  .navigation-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .category-breadcrumb,
+  .navigation-controls {
+    margin: 0 !important;
+  }
+
   .combo-box .combo-box-header,
   .select-kit.combo-box.category-drop .category-drop-header,
   .select-kit.combo-box.tag-drop .tag-drop-header,
+  .mobile-nav,
+  .select-kit-header,
   .navigation-controls .btn,
   .navigation-controls button,
-  .mobile-nav,
-  .nav-pills > li {
-    border-color: rgb(var(--primary-rgb), 0.14) !important;
-    border-radius: 8px !important;
-    background: rgb(var(--secondary-rgb), 0.92) !important;
-    box-shadow:
-      0 1px 2px rgb(var(--primary-rgb), 0.04),
-      inset 0 1px 0 rgb(var(--secondary-rgb), 0.68);
-    transition:
-      border-color 0.16s ease,
-      box-shadow 0.16s ease,
-      background-color 0.16s ease,
-      color 0.16s ease;
+  #create-topic {
+    box-sizing: border-box !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border: 1px solid var(--primary-low-mid) !important;
+    border-radius: 5px !important;
+    background: var(--secondary) !important;
+    box-shadow: none !important;
+    color: var(--primary) !important;
+    font-size: 0.94rem !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
   }
 
   .combo-box .combo-box-header,
   .select-kit.combo-box.category-drop .category-drop-header,
   .select-kit.combo-box.tag-drop .tag-drop-header,
   .mobile-nav,
-  .nav-pills > li > a,
-  .navigation-controls .btn,
-  .navigation-controls button {
-    font-weight: 600;
-    letter-spacing: -0.01em;
+  .select-kit-header {
+    padding-left: 0.55rem !important;
+    padding-right: 0.55rem !important;
   }
 
-  .combo-box .combo-box-header:hover,
-  .select-kit.combo-box.category-drop .category-drop-header:hover,
-  .select-kit.combo-box.tag-drop .tag-drop-header:hover,
-  .navigation-controls .btn:hover,
-  .navigation-controls button:hover,
-  .mobile-nav:hover,
-  .nav-pills > li:hover {
-    border-color: rgb(var(--primary-rgb), 0.22) !important;
-    background: var(--secondary) !important;
-    box-shadow:
-      0 2px 8px rgb(var(--primary-rgb), 0.07),
-      inset 0 1px 0 rgb(var(--secondary-rgb), 0.75);
+  .navigation-controls .btn,
+  .navigation-controls button,
+  #create-topic {
+    padding-left: 0.7rem !important;
+    padding-right: 0.7rem !important;
+  }
+
+  .nav-pills > li {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .nav-pills > li > a,
+  .nav-pills > li button {
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 0.25rem 0.45rem !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 0.94rem !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .nav-pills > li.active > a,
+  .nav-pills > li > a.active {
+    color: var(--tertiary) !important;
+    border-bottom: 2px solid var(--tertiary) !important;
   }
 
   .d-icon {
-    opacity: 0.72;
-    transition: opacity 0.16s ease;
-  }
-
-  .combo-box .combo-box-header:hover .d-icon,
-  .select-kit.combo-box.category-drop .category-drop-header:hover .d-icon,
-  .select-kit.combo-box.tag-drop .tag-drop-header:hover .d-icon,
-  .navigation-controls .btn:hover .d-icon,
-  .navigation-controls button:hover .d-icon,
-  .mobile-nav:hover .d-icon,
-  .nav-pills > li:hover .d-icon {
-    opacity: 1;
+    opacity: 0.78;
   }
 }
 
 .desktop-view {
-  .list-controls {
-    .combo-box .combo-box-header,
-    .select-kit.combo-box.category-drop .category-drop-header,
-    .select-kit.combo-box.tag-drop .tag-drop-header,
-    .navigation-controls .btn,
-    .navigation-controls button {
-      box-sizing: border-box;
-      min-height: 42px;
-      height: 42px;
-      padding: 0 13px;
-      border-radius: 6px;
-      font-size: 14px;
-      line-height: 40px;
-    }
-
-    .nav-pills > li > a {
-      font-size: 14px;
-      line-height: 42px;
-      padding: 0 13px;
-    }
-  }
-
   .topic-list .gf-topic-left .title,
   .topic-list .topic-item-metadata.right > .main-link .title,
   .topic-list .topic-item-metadata.right > .topic-list-main-link .title,
