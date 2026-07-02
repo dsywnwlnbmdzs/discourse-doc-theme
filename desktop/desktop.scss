@@ -12,7 +12,7 @@ textarea {
 }
 
 img.avatar {
-  border-radius: 4px;
+  border-radius: var(--gf-topic-avatar-radius, 6px);
 }
 
 .badge-wrapper {
@@ -335,8 +335,6 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   gap: 2em;
 }
 
-// Topic list v2. Desktop left topic cell is one column. The desktop activity
-// cell contains two internal columns: posts/views and latest reply summary.
 .topic-list {
   .gf-topic-list-v2-row {
     > td.posters,
@@ -367,25 +365,25 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   .gf-topic-left .pull-left {
     display: block !important;
     float: left;
-    width: var(--gf-topic-avatar-size, 40px);
-    height: var(--gf-topic-avatar-size, 40px);
+    width: var(--gf-topic-avatar-size, 44px);
+    height: var(--gf-topic-avatar-size, 44px);
     margin: 0 var(--gf-topic-avatar-gap, 10px) 0 0;
     line-height: 0;
   }
 
   .gf-topic-left .pull-left img.avatar {
-    width: var(--gf-topic-avatar-size, 40px);
-    height: var(--gf-topic-avatar-size, 40px);
-    max-width: var(--gf-topic-avatar-size, 40px);
-    max-height: var(--gf-topic-avatar-size, 40px);
+    width: var(--gf-topic-avatar-size, 44px);
+    height: var(--gf-topic-avatar-size, 44px);
+    max-width: var(--gf-topic-avatar-size, 44px);
+    max-height: var(--gf-topic-avatar-size, 44px);
     margin-top: 0;
     object-fit: cover;
   }
 
   .gf-topic-left .topic-item-metadata.right {
     min-width: 0;
-    min-height: var(--gf-topic-avatar-size, 40px);
-    margin-left: calc(var(--gf-topic-avatar-size, 40px) + var(--gf-topic-avatar-gap, 10px));
+    min-height: var(--gf-topic-avatar-size, 44px);
+    margin-left: calc(var(--gf-topic-avatar-size, 44px) + var(--gf-topic-avatar-gap, 10px));
   }
 
   .gf-topic-left .main-link,
@@ -435,7 +433,7 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
     width: 282px !important;
     min-width: 282px !important;
     max-width: 282px !important;
-    padding-left: 120px;
+    padding-left: 128px;
     padding-right: 0;
     text-align: left;
   }
@@ -467,7 +465,12 @@ body.has-sidebar-page.has-full-page-chat #main-outlet-wrapper {
   }
 
   .gf-stat-box {
+    box-sizing: border-box;
     min-width: 0;
+    min-height: 42px;
+    padding: 6px 5px 5px;
+    border-radius: 4px;
+    background: rgb(var(--primary-rgb), 0.035);
     text-align: center;
     line-height: 1.05;
   }
