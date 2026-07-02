@@ -261,6 +261,69 @@ header.d-header {
   margin-bottom: 0;
 }
 
+// Visual-only polish for topic-list controls. Keep existing layout and sizing intact.
+.list-controls {
+  .combo-box .combo-box-header,
+  .select-kit.combo-box.category-drop .category-drop-header,
+  .select-kit.combo-box.tag-drop .tag-drop-header,
+  .navigation-controls .btn,
+  .navigation-controls button,
+  .mobile-nav,
+  .nav-pills > li {
+    border-color: rgb(var(--primary-rgb), 0.14) !important;
+    border-radius: 8px !important;
+    background: rgb(var(--secondary-rgb), 0.92) !important;
+    box-shadow:
+      0 1px 2px rgb(var(--primary-rgb), 0.04),
+      inset 0 1px 0 rgb(var(--secondary-rgb), 0.68);
+    transition:
+      border-color 0.16s ease,
+      box-shadow 0.16s ease,
+      background-color 0.16s ease,
+      color 0.16s ease;
+  }
+
+  .combo-box .combo-box-header,
+  .select-kit.combo-box.category-drop .category-drop-header,
+  .select-kit.combo-box.tag-drop .tag-drop-header,
+  .mobile-nav,
+  .nav-pills > li > a,
+  .navigation-controls .btn,
+  .navigation-controls button {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .combo-box .combo-box-header:hover,
+  .select-kit.combo-box.category-drop .category-drop-header:hover,
+  .select-kit.combo-box.tag-drop .tag-drop-header:hover,
+  .navigation-controls .btn:hover,
+  .navigation-controls button:hover,
+  .mobile-nav:hover,
+  .nav-pills > li:hover {
+    border-color: rgb(var(--primary-rgb), 0.22) !important;
+    background: var(--secondary) !important;
+    box-shadow:
+      0 2px 8px rgb(var(--primary-rgb), 0.07),
+      inset 0 1px 0 rgb(var(--secondary-rgb), 0.75);
+  }
+
+  .d-icon {
+    opacity: 0.72;
+    transition: opacity 0.16s ease;
+  }
+
+  .combo-box .combo-box-header:hover .d-icon,
+  .select-kit.combo-box.category-drop .category-drop-header:hover .d-icon,
+  .select-kit.combo-box.tag-drop .tag-drop-header:hover .d-icon,
+  .navigation-controls .btn:hover .d-icon,
+  .navigation-controls button:hover .d-icon,
+  .mobile-nav:hover .d-icon,
+  .nav-pills > li:hover .d-icon {
+    opacity: 1;
+  }
+}
+
 .desktop-view {
   .list-controls {
     .combo-box .combo-box-header,
