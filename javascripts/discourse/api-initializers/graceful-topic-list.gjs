@@ -592,7 +592,7 @@ const GracefulLastPostCell = <template>
       </div>
     </div>
 
-    <div class="gf-last-post-summary">
+    <div class="gf-last-post-summary" style={{gfCategoryColorStyle @topic.category}}>
       {{#if @topic.replyCount}}
         <div class="gf-last-avatar-inline">
           {{#if @topic.lastPosterUser}}
