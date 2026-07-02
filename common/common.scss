@@ -24,6 +24,7 @@
       background-image: url($background-image);
     } @else {
       // Default background pattern from Toptal Subtle Patterns
+      // https://www.toptal.com/designers/subtlepatterns/japanese-asanoha/
       background-image: var(--default-background-dynamic);
     }
 
@@ -43,7 +44,7 @@
 
 #main-outlet-wrapper {
   box-sizing: border-box;
-  margin: 0;
+  margin: 0 auto;
   padding: 8px;
 }
 
