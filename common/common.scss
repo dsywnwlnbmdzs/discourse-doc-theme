@@ -24,7 +24,6 @@
       background-image: url($background-image);
     } @else {
       // Default background pattern from Toptal Subtle Patterns
-      // ♡ https://www.toptal.com/designers/subtlepatterns/japanese-asanoha/
       background-image: var(--default-background-dynamic);
     }
 
@@ -77,9 +76,9 @@ pre {
 
 :root {
   --d-hover: var(--tertiary-low);
-  --gf-topic-avatar-size: 40px;
+  --gf-topic-avatar-size: 44px;
   --gf-topic-avatar-gap: 10px;
-  --gf-topic-avatar-radius: 3px;
+  --gf-topic-avatar-radius: 6px;
   --gf-topic-title-font-size: 1.07em;
   --gf-topic-title-meta-gap: 6px;
   --gf-topic-title-line-height: 1.22;
@@ -256,8 +255,4 @@ header.d-header {
 
 #list-area {
   margin-bottom: 0;
-}
-
-#topic-title {
-  padding-top: 0;
 }
