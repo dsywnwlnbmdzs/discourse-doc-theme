@@ -265,3 +265,35 @@ header.d-header {
 #list-area {
   margin-bottom: 0;
 }
+
+.desktop-view {
+  .list-controls {
+    .combo-box .combo-box-header,
+    .select-kit.combo-box.category-drop .category-drop-header,
+    .select-kit.combo-box.tag-drop .tag-drop-header,
+    .navigation-controls .btn,
+    .navigation-controls button {
+      box-sizing: border-box;
+      min-height: 42px;
+      height: 42px;
+      padding: 0 13px;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 40px;
+    }
+
+    .nav-pills > li > a {
+      font-size: 14px;
+      line-height: 42px;
+      padding: 0 13px;
+    }
+  }
+
+  .topic-list .gf-topic-left .title,
+  .topic-list .topic-item-metadata.right > .main-link .title,
+  .topic-list .topic-item-metadata.right > .topic-list-main-link .title,
+  .topic-list .topic-item-metadata.right > .topic-list-main-link a.title {
+    font-size: 20px;
+    line-height: 1.22;
+  }
+}
