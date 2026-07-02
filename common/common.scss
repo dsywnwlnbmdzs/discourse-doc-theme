@@ -109,11 +109,6 @@ pre {
 }
 
 .topic-list {
-  tbody.topic-list-body > tr.topic-list-item > td.topic-list-data,
-  .gf-topic-list-v2-row > td.gf-topic-cell {
-    padding: var(--gf-topic-row-padding, 8px);
-  }
-
   .gf-topic-left .title,
   .topic-item-metadata.right > .main-link .title,
   .topic-item-metadata.right > .topic-list-main-link .title,
